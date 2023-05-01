@@ -1,3 +1,4 @@
+// @ts-nocheck
 import lookup from "./lookup.json";
 import mask from "./mask.json";
 import type {

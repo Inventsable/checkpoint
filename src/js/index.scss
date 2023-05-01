@@ -1,0 +1,40 @@
+@import url("https://fonts.googleapis.com/css?family=Open+Sans&display=swap");
+
+:root {
+  --quad: cubic-bezier(0.48, 0.04, 0.52, 0.96);
+  --quart: cubic-bezier(0.76, 0, 0.24, 1);
+  --quint: cubic-bezier(0.84, 0, 0.16, 1);
+  --color-alert: #eab41c;
+  --font-size: 10px;
+  background-color: var(--color-bg);
+  color: var(--default-color);
+  font-family: "Open Sans", sans-serif;
+}
+
+body {
+  margin: 0px;
+  overflow: hidden;
+}
+
+#root {
+  width: 100vw;
+  height: 100vh;
+}
+
+#root::-webkit-scrollbar {
+  display: block;
+}
+
+::-webkit-scrollbar {
+  background-color: var(--color-scrollbar);
+  width: var(--width-scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-scrollbar-thumb);
+  border-radius: var(--width-scrollbar-track);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-scrollbar-thumb-hover);
+}

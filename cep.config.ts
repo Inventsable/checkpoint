@@ -1,7 +1,6 @@
 import { CEP_Config } from "vite-cep-plugin";
 import { version } from "./package.json";
 
-
 const config: CEP_Config = {
   version,
   id: "com.hardhat.cep",
@@ -12,9 +11,7 @@ const config: CEP_Config = {
   startingDebugPort: 8860,
   extensionManifestVersion: 6.0,
   requiredRuntimeVersion: 9.0,
-  hosts: [
-    { name: "ILST", version: "[0.0,99.9]" }
-  ],
+  hosts: [{ name: "ILST", version: "[0.0,99.9]" }],
   type: "Panel",
   iconDarkNormal: "./src/assets/light-icon.png",
   iconNormal: "./src/assets/dark-icon.png",
@@ -30,10 +27,13 @@ const config: CEP_Config = {
       name: "main",
       panelDisplayName: "Hardhat",
       autoVisible: true,
-      width: 600,
-      height: 650,
+      width: 300,
+      height: 500,
+      minWidth: 40,
+      minHeight: 100,
+      maxWidth: 500,
+      maxHeight: 800,
     },
-
   ],
   build: {
     jsxBin: "off",

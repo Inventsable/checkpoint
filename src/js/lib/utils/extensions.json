@@ -1,0 +1,121 @@
+[
+  {
+    "mainPath":"C:\\Program Files\\Common Files\\Adobe\\CEP\\extensions\\CC_LIBRARIES_PANEL_EXTENSION_3_22_9\\manager.html",
+    "id": "com.adobe.cclibraries.manager",
+    "name": "com.adobe.cclibraries.manager",
+    "width":850,
+    "windowType": "Modeless",
+    "basePath": "C:\\Program Files\\Common Files\\Adobe\\CEP\\extensions\\CC_LIBRARIES_PANEL_EXTENSION_3_22_9",
+    "height":700
+  },
+  {
+    "mainPath": "C:\\Users\\TRSch\\AppData\\Roaming\\Adobe\\CEP\\extensions\\cep-hotkey-test\\dist\\index.html",
+    "maxHeight":500,
+    "maxWidth":598, 
+    "specialExtensionDataXML": "",
+    "id": "com.cep-hotkey-test.panel",
+    "name": "cep-hotkey-test",
+    "width":280,
+    "windowType": "Panel",
+    "isAutoVisible": true,
+    "basePath": "C:\\Users\\TRSch\\AppData\\Roaming\\Adobe\\CEP\\extensions\\cep-hotkey-test",
+    "height":400,
+    "minWidth":260,
+    "requiredRuntimeList":[
+      {
+        "name": "CSXS",
+        "versionRange": 
+          {
+            "lowerBound":
+              {
+                "version":
+                  {
+                    "minor":0, 
+                    "micro":0, 
+                    "major":8
+                  },
+                "inclusive":true
+              }
+          }
+      }
+    ],
+    "minHeight":300,
+    "isPluginExtension":false,
+    "defaultExtensionDataXML": ""
+  },
+  {
+    "mainPath": "C:\\Program Files\\Adobe\\Adobe Illustrator 2021\\Support Files\\Required\\CEP\\extensions\\com.adobe.illustrator.PixelSnappingOptions\\index.html",
+    "maxHeight":620,
+    "maxWidth":405,
+    "specialExtensionDataXML": "",
+    "id": "com.adobe.illustrator.PixelSnappingOptions.extension",
+    "name": "com.adobe.illustrator.PixelSnappingOptions.extension",
+    "width":405,
+    "windowType": "ModalDialog",
+    "isAutoVisible":true,
+    "basePath": "C:\\Program Files\\Adobe\\Adobe Illustrator 2021\\Support Files\\Required\\CEP\\extensions\\com.adobe.illustrator.PixelSnappingOptions",
+    "height":620,
+    "minWidth":405,
+  "requiredRuntimeList":[{"name": "CSXS",
+  "versionRange":{"lowerBound":{"version":{"minor":0,
+  "micro":0,
+  "major":7},
+  "inclusive":true}}}],
+  "minHeight":620,
+  "isPluginExtension":false,
+  "defaultExtensionDataXML":""
+},
+  {
+    "mainPath": "C:\\Users\\TRSch\\AppData\\Roaming\\Adobe\\CEP\\extensions\\com.keyminion.panel\\main\\index.html",
+    "maxHeight":1200,
+    "maxWidth":1200,
+    "specialExtensionDataXML": "",
+  "id": "com.keyminion.panel.settings",
+  "name": "com.keyminion.panel.settings",
+  "width":800,
+  "windowType": "ModalDialog",
+  "isAutoVisible":false,
+  "basePath": "C:\\Users\\TRSch\\AppData\\Roaming\\Adobe\\CEP\\extensions\\com.keyminion.panel",
+  "height":650,
+  "minWidth":600,
+  "requiredRuntimeList":[
+    {"name": "CSXS",
+  "versionRange":
+  {"lowerBound":{"version":{"minor":0,
+  "micro":0,"major":9},"inclusive":true}}}],"minHeight":600,"isPluginExtension":false,"defaultExtensionDataXML":
+  ""},{"mainPath":
+  "C:\\Users\\TRSch\\AppData\\Roaming\\Adobe\\CEP\\extensions\\protoLayers\\client\\index.html","maxHeight":1000,"maxWidth":1000,"specialExtensionDataXML":
+  "","id":
+  "inventsable.protolayers.panel","name":
+  "Layers+","width":382,"windowType":
+  "Panel","isAutoVisible":true,"basePath":
+  "C:\\Users\\TRSch\\AppData\\Roaming\\Adobe\\CEP\\extensions\\protoLayers","height":200,"minWidth":150,"requiredRuntimeList":[{"name":
+  "CSXS","versionRange":{"lowerBound":{"version":{"minor":0,"micro":0,"major":7},"inclusive":true}}}],"minHeight":100,"isPluginExtension":false,"defaultExtensionDataXML":
+  ""},{"mainPath":
+  "C:\\Users\\TRSch\\AppData\\Roaming\\Adobe\\CEP\\extensions\\protoColors\\client\\index.html","maxHeight":400,"maxWidth":50,"specialExtensionDataXML":
+  "","id":
+  "inventsable.protocolors.panel","name":
+  "protoColors","width":50,"windowType":
+  "Panel","isAutoVisible":true,"basePath":
+  "C:\\Users\\TRSch\\AppData\\Roaming\\Adobe\\CEP\\extensions\\protoColors","height":200,"minWidth":50,"requiredRuntimeList":[{"name":
+  "CSXS","versionRange":{"lowerBound":{"version":{"minor":0,"micro":0,"major":4},"inclusive":true}}}],"minHeight":100,"isPluginExtension":false,"defaultExtensionDataXML":
+  ""},{"minWidth":40,"mainPath":
+  "C:\\Program Files (x86)\\Common Files\\Adobe\\CEP\\extensions\\Overlord\\html\\index.html","minHeight":40,"id":
+  "com.overlord.panel","name":
+  "Overlord","width":300,"windowType":
+  "Panel","basePath":
+  "C:\\Program Files (x86)\\Common Files\\Adobe\\CEP\\extensions\\Overlord","height":300},{"mainPath":
+  "C:\\Program Files\\Adobe\\Adobe Illustrator 2021\\Support Files\\Required\\CEP\\extensions\\com.adobe.kuler.panel\\index.html","maxHeight":3000,"maxWidth":215,"specialExtensionDataXML":
+  "","id":
+  "KLR","name":
+  "Adobe Color Themes","width":215,"windowType":
+  "Panel","isAutoVisible":true,"basePath":
+  "C:\\Program Files\\Adobe\\Adobe Illustrator 2021\\Support Files\\Required\\CEP\\extensions\\com.adobe.kuler.panel","height":590,"minWidth":215,"requiredRuntimeList":[{"name":
+  "CSXS","versionRange":{"lowerBound":{"version":{"minor":0,"micro":0,"major":9},"inclusive":true}}}],"minHeight":482,"isPluginExtension":false,"defaultExtensionDataXML":
+  ""},{"mainPath":
+  "C:\\Program Files\\Common Files\\Adobe\\CEP\\extensions\\CC_LIBRARIES_PANEL_EXTENSION_3_22_9\\extensions\\stock-panel-licensing\\index.html","maxHeight":560,"maxWidth":480,"specialExtensionDataXML":
+  "","id":
+  "com.adobe.stock.panel.licensing-embedded","name":
+  "com.adobe.stock.panel.licensing-embedded","width":480,"windowType":
+  "ModalDialog","isAutoVisible":true,"basePath":"C:\\Program Files\\Common Files\\Adobe\\CEP\\extensions\\CC_LIBRARIES_PANEL_EXTENSION_3_22_9","height":null}
+]
