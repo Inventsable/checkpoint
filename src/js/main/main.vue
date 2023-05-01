@@ -4,12 +4,33 @@ import { onMounted, onBeforeMount } from "vue";
 import Panel from '../lib/components/panel.vue'
 import { RouterLink, RouterView, useRouter } from 'vue-router'
 import { useSettings } from "../stores/settings";
+import { useHelp } from "../stores/help";
+import {
+  csi,
+  evalES,
+} from "../lib/utils/utils";
+const settings = useSettings(),
+  help = useHelp();
 
-const settings = useSettings()
+const
+  root = `${csi.getSystemPath("extension")}/`,
+  isPopup = /settings/i.test(window.__adobe_cep__.getExtensionId() + ""),
+  isMainPanel = /main/i.test(window.__adobe_cep__.getExtensionId() + "")
 
 onBeforeMount(async () => {
-  await settings.init();
+  if (!isPopup) {
+    await settings.init();
+  } else {
+    await help.init();
+  }
 })
+onMounted(async () => {
+  const router = useRouter()
+  if (isPopup)
+    router.push({
+      path: `/settings/main`
+    })
+});
 
 </script>
 

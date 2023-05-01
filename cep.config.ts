@@ -34,6 +34,19 @@ const config: CEP_Config = {
       maxWidth: 500,
       maxHeight: 800,
     },
+    {
+      mainPath: "./main/index.html",
+      name: "settings",
+      autoVisible: false,
+      type: "ModalDialog",
+      width: 800,
+      height: 650,
+      minHeight: 600,
+      minWidth: 600,
+      maxHeight: 1200,
+      maxWidth: 1200,
+      startOnEvents: [],
+    },
   ],
   build: {
     jsxBin: "off",
@@ -48,7 +61,7 @@ const config: CEP_Config = {
     sourceMap: false,
     jsxBin: "off",
   },
-  installModules: [],
+  installModules: ["showdown"],
   copyAssets: [],
   copyZipAssets: [],
 };

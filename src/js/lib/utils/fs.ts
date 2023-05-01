@@ -1,5 +1,4 @@
-import fs from "fs";
-import path from "path";
+import { fs, path } from "../utils/node";
 
 interface ErrnoException extends Error {
   errno?: number;
