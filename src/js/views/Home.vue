@@ -23,7 +23,9 @@ function refresh() {
 
 <template>
   <div class="home-content">
-    HELLO WORLD
+    <div class="preview">
+
+    </div>
 
     <Button @click="forcePopup" label="OPEN POPUP" />
     <Button @click="refresh" label="REFRESH" />
@@ -32,6 +34,13 @@ function refresh() {
 </template>
 
 <style>
+.preview {
+  width: 100%;
+  height: 160px;
+  max-height: 240px;
+  border: 2px solid red;
+}
+
 /* Slim */
 @media screen and (max-width: 160px) {
   .current-key-container {
