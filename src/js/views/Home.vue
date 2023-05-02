@@ -4,8 +4,15 @@ import { fs, os, path, child_process } from "../lib/utils/node";
 import { csi, evalES, evalFile, openLinkInBrowser } from "../lib/utils/utils";
 import { useSettings } from '../stores/settings';
 import Button from '../lib/components/button.vue'
+import Preview from '../lib/components/preview.vue'
+import InputScroll from '../lib/components/input-scroll.vue'
 
 const settings = useSettings()
+const anchorWidth = computed<number>({
+  get: () => settings.anchor.style.width,
+  set: (val) => settings.anchor.style.width = val
+});
+
 function openPopup() {
   csi.requestOpenExtension("com.hardhat.cep.settings", "")
 }
@@ -24,21 +31,20 @@ function refresh() {
 <template>
   <div class="home-content">
     <div class="preview">
-
+      <Preview />
     </div>
 
     <Button @click="forcePopup" label="OPEN POPUP" />
     <Button @click="refresh" label="REFRESH" />
-
+    <InputScroll :min="0" :max="100" v-model="anchorWidth" suffix="px" tooltip="Size of anchor stroke in pixels" />
   </div>
 </template>
 
 <style>
 .preview {
   width: 100%;
-  height: 160px;
-  max-height: 240px;
-  border: 2px solid red;
+  max-height: 160px;
+  /* border: 2px solid red; */
 }
 
 /* Slim */

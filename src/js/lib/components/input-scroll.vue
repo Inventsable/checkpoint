@@ -57,15 +57,15 @@ function generateQuickGuid(): string {
     Math.random().toString(36).substring(2, 4)
   );
 }
-const focusEvt = (evt) => {
+const focusEvt = (evt: FocusEvent) => {
   if (props.autoSelect)
     nextTick(() => {
-      if (evt.target.select) evt.target.select();
+      if ((evt.target as HTMLInputElement).select) (evt.target as HTMLInputElement).select();
     });
   emit('focus')
 }
 
-const panHandle = (evt: PanEvent, step?: number): void => {
+const panHandle = (evt: PanEvent, step?: number): void | null => {
   if (evt.isFirst) {
     hasFocus.value = true;
   }
@@ -101,7 +101,7 @@ const increment = (delta: number): void => {
   value.value = clamp(value.value + amount);
 }
 
-const validateInput = (event) => {
+const validateInput = (event: Event) => {
   let temp = (event.target as HTMLInputElement).value;
   if (!temp || !(event.target as HTMLInputElement).innerText)
     value.value = clamp(Number(temp || 0));
@@ -130,9 +130,9 @@ const checkBlur = (event: FocusEvent) => {
     <div class="input-scroll-content" :class="{ focused: hasFocus }">
       <label class="prefix" v-if="prefix" :for="uuid" v-pan.prevent.mouse="panHandle">{{ prefix }}</label>
       <input type="number" :class="{ focused: hasFocus }" v-pan.prevent.mouse="panHandle" :style="{
-        fontSize: fontSize || '13px',
-        width: `${(value + '').split('').length}ch`
-      }" :value="value" @input="validateInput" @blur="checkBlur" @focus="hasFocus = true"
+          fontSize: fontSize || '13px',
+          width: `${(value + '').split('').length}ch`
+        }" :value="value" @input="validateInput" @blur="checkBlur" @focus="hasFocus = true"
         :placeholder="(placeholder || value).toString()" />
       <label class="suffix" v-if="suffix" :for="uuid" v-pan.prevent.mouse="panHandle">{{ suffix }}</label>
     </div>

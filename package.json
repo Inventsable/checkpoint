@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@mdi/js": "^7.2.96",
+    "lottie-web": "^5.11.0",
     "pinia": "^2.0.35",
     "showdown": "^2.1.0",
     "vue": "^3.2.45",

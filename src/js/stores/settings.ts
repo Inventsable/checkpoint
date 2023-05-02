@@ -1,7 +1,7 @@
 import { ref, computed, watch } from "vue";
 import { defineStore } from "pinia";
-import path from "path";
-import { readFile, writeFile, makeFolder, exists } from "../lib/utils/fs";
+// import path from "path";
+// import { readFile, writeFile, makeFolder, exists } from "../lib/utils/fs";
 const name = "settings";
 const storage = window.localStorage;
 const override = false;
@@ -47,9 +47,7 @@ export const useSettings = defineStore(name, {
   },
   actions: {
     async init() {
-      // const core = useCore();
-      // if (core.isPopup) return await this.alternateInit();
-      this.verifyTempFolder();
+      // this.verifyTempFolder();
       let temp = storage.getItem(name);
       if (!override && temp) this.$state = JSON.parse(temp);
       else if (!temp) storage.setItem(name, JSON.stringify(this.$state));
@@ -57,38 +55,38 @@ export const useSettings = defineStore(name, {
         this.$state,
         async (state) => {
           storage.setItem(name, JSON.stringify(state));
-          await this.saveSettings();
+          // await this.saveSettings();
         },
         { deep: true }
       );
     },
-    async saveSettings() {
-      const folder = path.join(
-        window.__adobe_cep__.getSystemPath("userData"),
-        "hardhat"
-      );
-      return await writeFile(
-        path.join(folder, "settings.json"),
-        JSON.stringify(this.$state)
-      );
-    },
-    async loadSettingsFromAppData() {
-      let targFile = path.join(
-        window.__adobe_cep__.getSystemPath("userData"),
-        "hardhat",
-        "settings.json"
-      );
-      let lastSettings = await readFile(targFile, false);
-      this.$state = lastSettings;
-    },
-    async verifyTempFolder() {
-      let folder = path.join(
-        window.__adobe_cep__.getSystemPath("userData"),
-        "hardhat"
-      );
-      if (!exists(folder)) await makeFolder(folder);
-      if (!exists(path.join(folder, "settings.json")))
-        await this.saveSettings();
-    },
+    // async saveSettings() {
+    //   const folder = path.join(
+    //     window.__adobe_cep__.getSystemPath("userData"),
+    //     "hardhat"
+    //   );
+    //   return await writeFile(
+    //     path.join(folder, "settings.json"),
+    //     JSON.stringify(this.$state)
+    //   );
+    // },
+    // async loadSettingsFromAppData() {
+    //   let targFile = path.join(
+    //     window.__adobe_cep__.getSystemPath("userData"),
+    //     "hardhat",
+    //     "settings.json"
+    //   );
+    //   let lastSettings = await readFile(targFile, false);
+    //   this.$state = lastSettings;
+    // },
+    // async verifyTempFolder() {
+    //   let folder = path.join(
+    //     window.__adobe_cep__.getSystemPath("userData"),
+    //     "hardhat"
+    //   );
+    //   if (!exists(folder)) await makeFolder(folder);
+    //   if (!exists(path.join(folder, "settings.json")))
+    //     await this.saveSettings();
+    // },
   },
 });
