@@ -193,7 +193,7 @@ console.log(animationFile)
 }
 
 .stickStroke {
-  stroke: var(--stick-stroke-color);
+  stroke: var(--handle-stroke-color);
   transition: stroke 200ms var(--quart) 0ms;
 }
 </style>
