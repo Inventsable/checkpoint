@@ -1,3 +1,11 @@
+/**
+ * - Need UI scale factor, all numeric inputs should be calculated against it
+ * - Should have an "Ignore background" checkbox to prevent outlining rects with artboard dimensions
+ * - Need to figure out how to retrieve checkbox values from Lottie
+ * - Animation "right" is a bit too fast, hardly can tell it's animated
+ * - Create basic demo site with Lottie outlines of Pear and Mango, credit original artist
+ */
+
 import { ref, computed, watch } from "vue";
 import { defineStore } from "pinia";
 // import path from "path";
@@ -11,30 +19,41 @@ export const useSettings = defineStore(name, {
     anchor: {
       style: {
         width: 4,
-        size: 20,
+        size: 10,
         color: "#ff0000",
+        filled: false,
       },
       label: "_anchor",
     },
     handle: {
-      size: 25,
+      style: {
+        size: 10,
+        label: "_handle",
+        width: 2,
+        filled: true,
+      },
       label: "_handle",
     },
     stick: {
+      style: {
+        width: 2,
+      },
       label: "_stick",
     },
     outline: {
-      width: 5,
-      color: "#231f20",
+      style: {
+        width: 2,
+        color: "#231f20",
+      },
     },
     options: {
       userLayerLabelColor: false,
-      anchorIsFilled: false,
       overrideComplex: false,
       forceOpacity: true,
       renameGenericPaths: true,
       generateIds: false,
       groupRelated: true,
+      scaleFactor: 100,
     },
   }),
   getters: {

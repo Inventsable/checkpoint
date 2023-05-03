@@ -11,7 +11,11 @@ const settings = useSettings()
 const anchorWidth = computed<number>({
   get: () => settings.anchor.style.width,
   set: (val) => settings.anchor.style.width = val
-});
+}),
+  handleWidth = computed<number>({
+    get: () => settings.handle.style.width,
+    set: (val) => settings.handle.style.width = val
+  });
 
 function openPopup() {
   csi.requestOpenExtension("com.hardhat.cep.settings", "")
@@ -37,6 +41,8 @@ function refresh() {
     <Button @click="forcePopup" label="OPEN POPUP" />
     <Button @click="refresh" label="REFRESH" />
     <InputScroll :min="0" :max="100" v-model="anchorWidth" suffix="px" tooltip="Size of anchor stroke in pixels" />
+    <InputScroll :min="0" :max="100" v-model="handleWidth" suffix="px" tooltip="Size of anchor stroke in pixels" />
+
   </div>
 </template>
 
