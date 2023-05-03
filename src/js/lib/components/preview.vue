@@ -166,7 +166,7 @@ console.log(animationFile)
 }
 
 .anchorFill {
-  fill: var(--handle-stroke-color);
+  fill: var(--anchor-stroke-color);
   transition: fill 200ms var(--quart) 0ms;
 }
 
