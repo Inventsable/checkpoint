@@ -152,39 +152,48 @@ console.log(animationFile)
 
 .bgFill {
   fill: var(--color-bg);
+  transition: fill 200ms var(--quart) 0ms;
 }
 
 .stemStroke {
   stroke: var(--outline-stroke-color);
+  transition: stroke 200ms var(--quart) 0ms;
 }
 
 .anchorStroke {
   stroke: var(--anchor-stroke-color);
+  transition: stroke 200ms var(--quart) 0ms;
 }
 
 .anchorFill {
   fill: var(--handle-stroke-color);
+  transition: fill 200ms var(--quart) 0ms;
 }
 
 .anchorFillMask {
   /* fill: var(--color-bg); */
   fill: transparent;
+  transition: fill 200ms var(--quart) 0ms;
 }
 
 .handleStroke {
   stroke: var(--handle-stroke-color);
+  transition: stroke 200ms var(--quart) 0ms;
 }
 
 .handleFill {
   fill: var(--handle-stroke-color);
+  transition: fill 200ms var(--quart) 0ms;
 }
 
 .handleFillMask {
   /* fill: var(--color-bg); */
   fill: transparent;
+  transition: fill 200ms var(--quart) 0ms;
 }
 
 .stickStroke {
   stroke: var(--stick-stroke-color);
+  transition: stroke 200ms var(--quart) 0ms;
 }
 </style>
