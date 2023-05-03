@@ -21,7 +21,7 @@ export const useSettings = defineStore(name, {
         width: 4,
         size: 10,
         color: "#ff0000",
-        filled: false,
+        filled: true,
       },
       label: "_anchor",
     },

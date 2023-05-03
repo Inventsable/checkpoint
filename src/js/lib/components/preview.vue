@@ -82,7 +82,6 @@ const sliderEnums = [
   }
 ]
 
-
 function getUniqueRoll() {
   const rollIndex = roll(0, animations.length);
   let lastRoll = +window.localStorage.getItem("lastRoll");
@@ -142,13 +141,6 @@ console.log(animationFile)
 </template>
 
 <style>
-:root {
-  --anchor-stroke-color: #FFEE00;
-  --handle-stroke-color: #FFEE00;
-  --stick-stroke-color: #FFEE00;
-  --outline-stroke-color: #ffffffcc;
-}
-
 .lottie-container {
   padding: 4px 10px;
 }

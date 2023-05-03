@@ -1,7 +1,7 @@
 <script setup lang="ts">
 const props = defineProps<{
   modelValue: boolean;
-  label: string;
+  label?: string;
   fontSize?: string;
   tooltip?: string;
 }>()
@@ -26,9 +26,9 @@ function generateQuickGuid(): string {
   <div class="checkbox-input-wrapper" :style="{
     fontSize: fontSize || '12px'
   }">
-    <input type="checkbox" :value="modelValue" :checked="modelValue" @input="changeInput" @blur="$emit('blur')" :id="uuid"
-      :name="uuid">
-    <label :for="uuid">{{ props.label }}</label>
+    <input type="checkbox" tabindex="0" :value="modelValue" :checked="modelValue" @input="changeInput"
+      @blur="$emit('blur')" :id="uuid" :name="uuid">
+    <label :for="uuid" tabindex="0">{{ props.label }}</label>
   </div>
 </template>
 
@@ -79,7 +79,6 @@ input[type="checkbox"]::before {
   content: "";
   width: .875em;
   height: .875em;
-  /* clip-path: polygon(15% 15%, 90% 15%, 90% 85%, 20% 85%); */
   clip-path: polygon(2px 2px, 8.5px 2px, 8.5px 8.5px, 2px 8.5px);
   transform: scale(0);
   transform-origin: center;
@@ -107,7 +106,7 @@ input[type="checkbox"]:checked::before {
 }
 
 .checkbox-input-wrapper:not(:hover) input[type="checkbox"]:focus {
-  outline: max(2px, 0.15em) solid var(--color-selection);
+  /* outline: max(2px, 0.15em) solid var(--color-selection); */
   outline-offset: max(2px, 0.15em);
 }
 
