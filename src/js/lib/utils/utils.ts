@@ -19,6 +19,7 @@ export const evalES = (script: string, isGlobal = false): Promise<string> => {
       ? ""
       : `var host = typeof $ !== 'undefined' ? $ : window; host["${ns}"].`;
     const fullString = pre + script;
+    console.log(fullString);
     csi.evalScript(
       "try{" + fullString + "}catch(e){alert(e);}",
       (res: string) => {

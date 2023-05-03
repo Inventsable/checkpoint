@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "target": "es3",
+    "ignoreDeprecations": "5.0",
     "noLib": true,
     "strict": true,
     "types": [

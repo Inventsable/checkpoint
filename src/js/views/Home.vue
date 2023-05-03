@@ -3,6 +3,7 @@ import { onMounted, ref, computed, watch } from "vue";
 import { fs, os, path, child_process } from "../lib/utils/node";
 import { csi, evalES, evalFile, openLinkInBrowser } from "../lib/utils/utils";
 import { useSettings } from '../stores/settings';
+
 import Button from '../lib/components/button.vue'
 import Preview from '../lib/components/preview.vue'
 import Checkbox from '../lib/components/checkbox.vue'
@@ -10,16 +11,14 @@ import InputScroll from '../lib/components/input-scroll.vue'
 import AnchorIcon from '../lib/components/anchor-icon.vue'
 import StickIcon from '../lib/components/stick-icon.vue'
 import OutlineIcon from '../lib/components/outline-icon.vue'
-
 import ToolbarButton from '../lib/components/toolbar-button.vue'
-
-
 import HandleIcon from '../lib/components/handle-icon.vue'
 import ColorPicker from '../lib/components/color-picker.vue'
+import { ColorValue } from "../../shared/shared";
 
 const settings = useSettings()
-const isAnchorFilled = ref(settings.anchor.style.filled);
 
+const isAnchorFilled = ref(settings.anchor.style.filled);
 watch(isAnchorFilled, (value) => {
   settings.anchor.style.filled = value;
 })
@@ -27,6 +26,13 @@ const isHandleFilled = ref(settings.handle.style.filled);
 watch(isHandleFilled, (value) => {
   settings.handle.style.filled = value;
 })
+
+const setCSS = (prop: string, data: string): void => {
+  console.log(prop, data)
+  document.documentElement.style.setProperty(
+    prop, data
+  );
+}
 
 const typeHovers = ref({
   handle: false,
@@ -66,23 +72,46 @@ const anchorWidth = computed<number>({
   outlineWidth = computed<number>({
     get: () => settings.outline.style.width,
     set: (val) => settings.outline.style.width = val
+  }),
+  outlineColor = computed<ColorValue>({
+    get: () => settings.outline.style.color,
+    set: (val) => settings.outline.style.color = val
+  }),
+  anchorColor = computed<ColorValue>({
+    get: () => settings.anchor.style.color,
+    set: (val) => settings.anchor.style.color = val
+  }),
+  handleColor = computed<ColorValue>({
+    get: () => settings.handle.style.color,
+    set: (val) => settings.handle.style.color = val
   })
 
-function hoverOn() {
-  console.log("ON")
-  typeHovers.value.handle = true;
-  console.log(typeHovers.value.handle)
-}
-function hoverOff() {
-  console.log("OFF")
-  typeHovers.value.handle = false;
-  console.log(typeHovers.value.handle)
-}
+const CSSVars = [
+  {
+    path: "--anchor-stroke-color",
+    value: anchorColor
+  },
+  {
+    path: "--handle-stroke-color",
+    value: handleColor
+  },
+  {
+    path: "--outline-stroke-color",
+    value: outlineColor
+  },
+]
 
-function openPopup() {
-  csi.requestOpenExtension("com.hardhat.cep.settings", "")
-}
+CSSVars.forEach(cssVar => {
+  watch(cssVar.value, (value) => {
+    setCSS(cssVar.path, `rgba(${value.red}, ${value.green}, ${value.blue}, 1)`)
+  }, { deep: true })
+  setCSS(cssVar.path, `rgba(${cssVar.value.value.red}, ${cssVar.value.value.green}, ${cssVar.value.value.blue}, 1)`)
+})
+
 function forcePopup() {
+  function openPopup() {
+    csi.requestOpenExtension("com.hardhat.cep.settings", "")
+  }
   openPopup()
   setTimeout(() => {
     openPopup();
@@ -123,7 +152,7 @@ function refresh() {
           <InputScroll :min="1" :max="100" v-model="handleSize" suffix="px" tooltip="Size of handle stroke in pixels" />
 
           <InputScroll :min="0" :max="100" v-model="handleWidth" suffix="px" tooltip="Size of handle stroke in pixels" />
-          <div class="color-picker-placeholder">X</div>
+          <ColorPicker v-model="handleColor" />
           <Checkbox v-model="isHandleFilled" @update="val => isHandleFilled = val" />
         </div>
       </div>
@@ -142,7 +171,7 @@ function refresh() {
           <InputScroll :min="1" :max="100" v-model="anchorSize" suffix="px" tooltip="Size of anchor stroke in pixels" />
 
           <InputScroll :min="0" :max="100" v-model="anchorWidth" suffix="px" tooltip="Size of anchor stroke in pixels" />
-          <ColorPicker label="Test" />
+          <ColorPicker v-model="anchorColor" />
           <Checkbox v-model="isAnchorFilled" @update="val => isAnchorFilled = val" />
         </div>
       </div>
@@ -151,7 +180,7 @@ function refresh() {
           <OutlineIcon @mouseenter="typeHovers.outline = true" @mouseleave="typeHovers.outline = false" />
           <div></div>
           <InputScroll :min="0" :max="100" v-model="outlineWidth" suffix="px" tooltip="Size of handle stroke in pixels" />
-          <ColorPicker label="Test" />
+          <ColorPicker v-model="outlineColor" />
           <div></div>
         </div>
       </div>

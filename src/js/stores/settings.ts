@@ -20,7 +20,11 @@ export const useSettings = defineStore(name, {
       style: {
         width: 4,
         size: 10,
-        color: "#ff0000",
+        color: {
+          red: 255,
+          green: 238,
+          blue: 0,
+        },
         filled: true,
       },
       label: "_anchor",
@@ -29,6 +33,11 @@ export const useSettings = defineStore(name, {
       style: {
         size: 10,
         label: "_handle",
+        color: {
+          red: 255,
+          green: 238,
+          blue: 0,
+        },
         width: 2,
         filled: true,
       },
@@ -43,7 +52,11 @@ export const useSettings = defineStore(name, {
     outline: {
       style: {
         width: 2,
-        color: "#231f20",
+        color: {
+          red: 255,
+          green: 255,
+          blue: 255,
+        },
       },
     },
     options: {
