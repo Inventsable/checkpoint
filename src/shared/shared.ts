@@ -14,4 +14,4 @@ export interface cmykColor {
   black: number;
   typename?: string;
 }
-export type ColorValue = rgbColor | hslColor | cmykColor;
+export type ColorValue = rgbColor | cmykColor;

@@ -20,8 +20,8 @@ function refresh() {
 <style>
 .panel-content {
   box-sizing: border-box;
-  margin: calc(var(--size-icon) + 6px) 6px 6px 6px;
-  height: calc(100vh - var(--size-icon) + 6px)
+  margin: 6px;
+  height: calc(100vh - 12px)
 }
 
 
@@ -29,8 +29,8 @@ function refresh() {
 @media screen and (max-width: 160px) {
   .panel-content {
     overflow-y: hidden;
-    height: calc(100vh - 72px);
-    margin: 70px 0px 0px 0px;
+    /* height: calc(100vh - 72px); */
+    /* margin: 70px 0px 0px 0px; */
   }
 
   .panel,
@@ -43,8 +43,8 @@ function refresh() {
 /* Toolbar */
 @media screen and (max-width: 90px) {
   .panel-content {
-    margin: 70px 0px 0px 0px;
-    height: calc(100vh - 72px);
+    /* margin: 70px 0px 0px 0px;
+    height: calc(100vh - 72px); */
   }
 }
 </style>

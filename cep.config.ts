@@ -4,7 +4,7 @@ import { version } from "./package.json";
 const config: CEP_Config = {
   version,
   id: "com.hardhat.cep",
-  displayName: "Hardhat",
+  displayName: "Checkpoint",
   symlink: "local",
   port: 3000,
   servePort: 5000,
@@ -25,12 +25,12 @@ const config: CEP_Config = {
     {
       mainPath: "./main/index.html",
       name: "main",
-      panelDisplayName: "Hardhat",
+      panelDisplayName: "Checkpoint",
       autoVisible: true,
       width: 300,
       height: 500,
       minWidth: 40,
-      minHeight: 100,
+      minHeight: 200,
       maxWidth: 500,
       maxHeight: 800,
     },

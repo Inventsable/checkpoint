@@ -8,6 +8,7 @@
 
 import { ref, computed, watch } from "vue";
 import { defineStore } from "pinia";
+import { ColorValue } from "../../shared/shared";
 // import path from "path";
 // import { readFile, writeFile, makeFolder, exists } from "../lib/utils/fs";
 const name = "settings";
@@ -24,7 +25,7 @@ export const useSettings = defineStore(name, {
           red: 255,
           green: 238,
           blue: 0,
-        },
+        } as ColorValue,
         filled: true,
       },
       label: "_anchor",
@@ -37,7 +38,7 @@ export const useSettings = defineStore(name, {
           red: 255,
           green: 238,
           blue: 0,
-        },
+        } as ColorValue,
         width: 2,
         filled: true,
       },
@@ -56,7 +57,7 @@ export const useSettings = defineStore(name, {
           red: 255,
           green: 255,
           blue: 255,
-        },
+        } as ColorValue,
       },
     },
     options: {
@@ -67,6 +68,14 @@ export const useSettings = defineStore(name, {
       generateIds: false,
       groupRelated: true,
       scaleFactor: 100,
+      displayBG: {
+        include: false,
+        color: {
+          red: 50,
+          green: 50,
+          blue: 50,
+        } as ColorValue,
+      },
     },
   }),
   getters: {

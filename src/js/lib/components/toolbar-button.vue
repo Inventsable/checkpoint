@@ -30,6 +30,9 @@ const slots = useSlots();
 
 <style lang="scss" scoped>
 .toolbar-button-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   box-sizing: border-box;
   margin: 0px 0px;
   padding: 0px;

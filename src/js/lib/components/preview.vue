@@ -29,11 +29,6 @@ interface LottieAnimation {
   destroy: () => void;
 }
 
-
-console.log("TESTING")
-console.log(lottie_api)
-
-console.log(lottie)
 const anim = ref(null)
 const animAPI = ref(null);
 const playedIntro = ref(false);
@@ -84,7 +79,7 @@ const sliderEnums = [
 
 function getUniqueRoll() {
   const rollIndex = roll(0, animations.length);
-  let lastRoll = +window.localStorage.getItem("lastRoll");
+  let lastRoll = +window.localStorage.getItem("lastRoll") || 0;
   if (rollIndex == lastRoll)
     return getUniqueRoll()
   else {
@@ -93,14 +88,12 @@ function getUniqueRoll() {
   }
 }
 
-console.log("ROLLED:", rollNumber);
-
 const animationFile = animations[rollNumber]
 
 onMounted(() => {
 
   anim.value = buildAnimation();
-  animAPI.value = lottie_api.createAnimationApi(anim.value);
+  animAPI.value = (lottie_api as LottieApi).createAnimationApi(anim.value);
   anim.value.addEventListener('loopComplete', () => {
     if (!playedIntro.value) {
       anim.value.goToAndStop(anim.value.totalFrames - 1, true);
@@ -131,7 +124,6 @@ function buildAnimation() {
 }
 
 
-console.log(animationFile)
 </script>
 
 <template>
@@ -142,7 +134,10 @@ console.log(animationFile)
 
 <style>
 .lottie-container {
-  padding: 4px 10px;
+  box-sizing: border-box;
+  padding: 0px 10px 4px 10px;
+  background-color: var(--display-bg);
+  max-width: 200px;
 }
 
 .lottie-container svg {
@@ -151,7 +146,7 @@ console.log(animationFile)
 }
 
 .bgFill {
-  fill: var(--color-bg);
+  fill: var(--display-bg);
   transition: fill 200ms var(--quart) 0ms;
 }
 
