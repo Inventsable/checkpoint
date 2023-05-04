@@ -120,21 +120,17 @@ CSSVars.forEach(cssVar => {
   const isCMYK = (Object.keys(cssVar.value.value).includes("cyan"))
 
   watch(cssVar.value, (value: ColorValue) => {
-    let temp = !isCMYK ? value : convertCMYKToRGB(value as cmykColor) as rgbColor;
-    // @ts-ignore
+    let temp = (!isCMYK ? value : convertCMYKToRGB(value as cmykColor)) as rgbColor;
     setCSS(cssVar.path, `rgba(${temp.red}, ${temp.green}, ${temp.blue}, 1)`)
   }, { deep: true })
-  // @ts-ignore
-  let temp = (!isCMYK ? cssVar.value.value : convertCMYKToRGB(cssVar.value.value)) as rgbColor;
+  let temp = (!isCMYK ? cssVar.value.value : convertCMYKToRGB(cssVar.value.value as cmykColor)) as rgbColor;
   setCSS(cssVar.path, `rgba(${temp.red}, ${temp.green}, ${temp.blue}, 1)`)
 })
 
 watch(displayBGColor, (value) => {
   const isCMYK = (Object.keys(displayBGColor.value).includes("cyan"))
   if (settings.options.displayBG.include) {
-    // @ts-ignore
-    let temp = !isCMYK ? value : convertCMYKToRGB(value);
-    // @ts-ignore
+    let temp = (!isCMYK ? value : convertCMYKToRGB(value as cmykColor)) as rgbColor;
     setCSS('--display-bg', `rgba(${temp.red}, ${temp.green}, ${temp.blue}, 1)`)
   }
 }, { deep: true })
@@ -144,10 +140,9 @@ watch(includeDisplayBG, (value) => {
   if (!value)
     setCSS('--display-bg', `transparent`)
   else {
-    let temp = settings.options.displayBG.color;
+    let temp = settings.options.displayBG.color as ColorValue;
     if (Object.keys(settings.options.displayBG.color).includes("cyan")) {
-      // @ts-ignore
-      temp = convertCMYKToRGB(settings.options.displayBG.color) as rgbColor;
+      temp = convertCMYKToRGB(settings.options.displayBG.color as cmykColor) as rgbColor;
     }
     // @ts-ignore
     setCSS('--display-bg', `rgba(${temp.red}, ${temp.green}, ${temp.blue}, 1)`)
@@ -158,10 +153,9 @@ function loadDisplayBG() {
   if (!value)
     setCSS('--display-bg', `transparent`)
   else {
-    let temp = settings.options.displayBG.color;
+    let temp = settings.options.displayBG.color as ColorValue;
     if (Object.keys(settings.options.displayBG.color).includes("cyan")) {
-      // @ts-ignore
-      temp = convertCMYKToRGB(settings.options.displayBG.color) as rgbColor;
+      temp = convertCMYKToRGB(settings.options.displayBG.color as cmykColor) as rgbColor;
     }
     // @ts-ignore
     setCSS('--display-bg', `rgba(${temp.red}, ${temp.green}, ${temp.blue}, 1)`)
@@ -287,9 +281,6 @@ onMounted(() => {
   --outline-stroke-color: #ffffffcc;
 }
 
-.home-content {}
-
-
 .slim-anno {
   display: none;
 }
@@ -348,10 +339,6 @@ onMounted(() => {
   border-radius: 6px 6px 0px 0px;
   transition: border-radius 120ms var(--quint) 20ms;
   padding-top: 8px;
-}
-
-.lottie-container {
-  /* border-radius: 30px; */
 }
 
 .preview-header {
