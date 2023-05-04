@@ -30,7 +30,6 @@ watch(isHandleFilled, (value) => {
 const includeDisplayBG = ref(settings.options.displayBG.include);
 
 const setCSS = (prop: string, data: string): void => {
-  console.log(prop, data)
   document.documentElement.style.setProperty(
     prop, data
   );
@@ -45,7 +44,6 @@ const typeHovers = ref({
 
 const typeSelected = computed<string>(() => {
   const hasSelection = Object.values(typeHovers.value).findIndex(i => i);
-  console.log(hasSelection)
   if (hasSelection >= 0)
     return Object.entries(typeHovers.value)[hasSelection][0]
   else return "Type"
@@ -119,30 +117,26 @@ const CSSVars = [
 ]
 
 CSSVars.forEach(cssVar => {
+  const isCMYK = (Object.keys(cssVar.value.value).includes("cyan"))
+
   watch(cssVar.value, (value: ColorValue) => {
-    let temp = value;
-    if (Object.keys(value).includes("cyan")) {
-      // @ts-ignore
-      temp = convertCMYKToRGB(value) as rgbColor;
-    }
+    let temp = !isCMYK ? value : convertCMYKToRGB(value as cmykColor) as rgbColor;
     // @ts-ignore
     setCSS(cssVar.path, `rgba(${temp.red}, ${temp.green}, ${temp.blue}, 1)`)
   }, { deep: true })
   // @ts-ignore
-  setCSS(cssVar.path, `rgba(${cssVar.value.value.red}, ${cssVar.value.value.green}, ${cssVar.value.value.blue}, 1)`)
+  let temp = (!isCMYK ? cssVar.value.value : convertCMYKToRGB(cssVar.value.value)) as rgbColor;
+  setCSS(cssVar.path, `rgba(${temp.red}, ${temp.green}, ${temp.blue}, 1)`)
 })
 
 watch(displayBGColor, (value) => {
+  const isCMYK = (Object.keys(displayBGColor.value).includes("cyan"))
   if (settings.options.displayBG.include) {
-    let temp = value;
-    if (Object.keys(value).includes("cyan")) {
-      // @ts-ignore
-      temp = convertCMYKToRGB(value) as rgbColor;
-    }
+    // @ts-ignore
+    let temp = !isCMYK ? value : convertCMYKToRGB(value);
     // @ts-ignore
     setCSS('--display-bg', `rgba(${temp.red}, ${temp.green}, ${temp.blue}, 1)`)
   }
-
 }, { deep: true })
 
 watch(includeDisplayBG, (value) => {
@@ -161,7 +155,6 @@ watch(includeDisplayBG, (value) => {
 })
 function loadDisplayBG() {
   const value = settings.options.displayBG.include;
-  console.log(value);
   if (!value)
     setCSS('--display-bg', `transparent`)
   else {

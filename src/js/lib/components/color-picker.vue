@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, ref, useSlots } from 'vue'
-import { evalTS } from '../utils/bolt';
 import { evalES } from '../utils/utils';
 import type { ColorValue, rgbColor, cmykColor } from '../../../shared/shared';
 const props = defineProps({
@@ -10,7 +9,7 @@ const props = defineProps({
       red: 50,
       green: 50,
       blue: 50
-    },
+    } as rgbColor,
   },
   label: {
     type: String,
@@ -21,6 +20,7 @@ const props = defineProps({
     default: 14
   }
 })
+
 const emit = defineEmits<{
   (e: 'update:modelValue', value: ColorValue): void
   (e: 'update', value: ColorValue): void
@@ -31,25 +31,22 @@ const value = computed({
     return props.modelValue || { red: 50, green: 50, blue: 50 };
   },
   set(val: ColorValue): void {
-    console.log("EMITTING NEW VALUE")
     emit("update:modelValue", val);
   }
 })
 
-console.log(props)
-
-const simulatedColor = computed<ColorValue>(() => {
-  if (Object.keys(value).includes("cyan"))
-    return convertCMYKToRGB(value.value)
-  else return value.value
+const simulatedColor = computed<rgbColor>(() => {
+  if (Object.keys(value.value).includes("cyan"))
+    return convertCMYKToRGB(value.value as cmykColor) as rgbColor
+  else return value.value as rgbColor
 })
 
-function convertCMYKToRGB(cmyk: cmykColor): rgbColor {
+function convertCMYKToRGB(cmyk: cmykColor) : rgbColor {
   const { cyan, magenta, yellow, black } = cmyk as cmykColor;
   const red = Math.round(255 * (1 - cyan / 100) * (1 - black / 100));
   const green = Math.round(255 * (1 - magenta / 100) * (1 - black / 100));
   const blue = Math.round(255 * (1 - yellow / 100) * (1 - black / 100));
-  return { red, green, blue } as rgbColor;
+  return { red, green, blue } as rgbColor
 }
 
 async function openColorPicker() {
@@ -58,7 +55,6 @@ async function openColorPicker() {
   const isSame = JSON.stringify(result) == JSON.stringify(value.value);
   if (isSame)
     return null;
-  console.log(result);
   value.value = result;
 }
 
