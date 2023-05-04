@@ -137,6 +137,8 @@ function buildAnimation() {
   box-sizing: border-box;
   padding: 0px 10px 4px 10px;
   background-color: var(--display-bg);
+  transition: background-color 200ms var(--quart) 0ms;
+
   max-width: 200px;
 }
 
@@ -146,8 +148,7 @@ function buildAnimation() {
 }
 
 .bgFill {
-  fill: var(--display-bg);
-  transition: fill 200ms var(--quart) 0ms;
+  fill: transparent;
 }
 
 .stemStroke {
