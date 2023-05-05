@@ -1,3 +1,3 @@
-- Does not work in CMYK, produces null values in display.
 - Needs input-scroll autoselect
 - Potential link to Swatches or themes per Antonio's feedback. If users want to use it on certain artwork with same color schemes often then it'd make sense for them to be able to link multiple themes
+- Color-Picker would probably be best as pure SVG. It'd solve all positional issues
