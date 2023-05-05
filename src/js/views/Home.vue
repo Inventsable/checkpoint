@@ -18,6 +18,11 @@ import { ColorValue, rgbColor, cmykColor } from "../../shared/shared";
 import {
   setCSS, convertCMYKToRGB
 } from "../lib/utils/app";
+const fakeColor = ref({
+  red: 50,
+  blue: 50,
+  green: 50
+})
 
 const settings = useSettings()
 
@@ -135,56 +140,53 @@ CSSVars.forEach(cssVar => {
 
       <div class="table-row">
 
-        <div class="row-indicator">
+        <div class="row-indicator" title="Handle">
           <HandleIcon />
         </div>
         <div class="table-container">
           <HandleIcon @mouseenter="typeHovers.handle = true" @mouseleave="typeHovers.handle = false" />
-          <InputScroll :min="1" :max="100" v-model="handleSize" suffix="px" tooltip="Size of handle stroke in pixels" />
-
-          <InputScroll :min="0" :max="100" v-model="handleWidth" suffix="px" tooltip="Size of handle stroke in pixels" />
-          <ColorPicker v-model="handleColor" />
-          <Checkbox v-model="isHandleFilled" @update="val => isHandleFilled = val" />
+          <InputScroll :min="1" :max="100" v-model="handleSize" suffix="px" tooltip="Size of handle width/height in px" />
+          <InputScroll :min="0" :max="100" v-model="handleWidth" suffix="px" tooltip="Size of handle stroke in px" />
+          <ColorPicker v-model="handleColor" title="Handle color" />
+          <Checkbox v-model="isHandleFilled" @update="val => isHandleFilled = val" title="Add fill to handle" />
         </div>
       </div>
       <div class="table-row">
-        <div class="row-indicator">
+        <div class="row-indicator" title="Stick">
           <StickIcon />
         </div>
         <div class="table-container">
           <StickIcon @mouseenter="typeHovers.stick = true" @mouseleave="typeHovers.stick = false" />
-          <div class="placeholder"></div>
-          <InputScroll :min="0" :max="100" v-model="stickWidth" suffix="px" tooltip="Size of handle stroke in pixels" />
-          <div class="placeholder"></div>
-          <div class="placeholder"></div>
+          <div class="placeholder" />
+          <InputScroll :min="0" :max="100" v-model="stickWidth" suffix="px" tooltip="Size of stick stroke in px" />
+          <ColorPicker v-model="fakeColor" :disabled="true" class="fake-color"
+            title="Sticks inherit handle color above" />
+          <div class="placeholder" />
         </div>
       </div>
       <div class="table-row">
-        <div class="row-indicator">
+        <div class="row-indicator" title="Anchor">
           <AnchorIcon />
         </div>
 
         <div class="table-container">
           <AnchorIcon @mouseenter="typeHovers.anchor = true" @mouseleave="typeHovers.anchor = false" />
-          <InputScroll :min="1" :max="100" v-model="anchorSize" suffix="px" tooltip="Size of anchor stroke in pixels" />
-
-          <InputScroll :min="0" :max="100" v-model="anchorWidth" suffix="px" tooltip="Size of anchor stroke in pixels" />
-          <ColorPicker v-model="anchorColor" />
-          <Checkbox v-model="isAnchorFilled" @update="val => isAnchorFilled = val" />
+          <InputScroll :min="1" :max="100" v-model="anchorSize" suffix="px" tooltip="Size of anchor width/height in px" />
+          <InputScroll :min="0" :max="100" v-model="anchorWidth" suffix="px" tooltip="Size of anchor stroke in px" />
+          <ColorPicker v-model="anchorColor" title="Anchor color" />
+          <Checkbox v-model="isAnchorFilled" @update="val => isAnchorFilled = val" title="Add fill to anchor" />
         </div>
       </div>
       <div class="table-row">
-        <div class="row-indicator">
-
+        <div class="row-indicator" title="Outline">
           <OutlineIcon />
         </div>
-
         <div class="table-container">
           <OutlineIcon @mouseenter="typeHovers.outline = true" @mouseleave="typeHovers.outline = false" />
-          <div class="placeholder"></div>
-          <InputScroll :min="0" :max="100" v-model="outlineWidth" suffix="px" tooltip="Size of handle stroke in pixels" />
+          <div class="placeholder" />
+          <InputScroll :min="0" :max="100" v-model="outlineWidth" suffix="px" tooltip="Size of outline stroke in px" />
           <ColorPicker v-model="outlineColor" />
-          <div class="placeholder"></div>
+          <div class="placeholder" />
         </div>
       </div>
     </div>
@@ -355,6 +357,10 @@ CSSVars.forEach(cssVar => {
 
 /* Toolbar */
 @media screen and (max-width: 149px) {
+  .fake-color {
+    display: none !important;
+  }
+
   .toolbar {
     padding: 3px 0px 6px 0px;
   }
@@ -483,6 +489,15 @@ CSSVars.forEach(cssVar => {
     flex-wrap: wrap;
     justify-content: center;
     align-items: center;
+  }
+
+  .table-container {
+    flex-direction: column;
+  }
+
+  .table-container>* {
+    margin-bottom: 6px !important;
+    margin-top: 0px !important;
   }
 
   .toolbar-button-wrapper {

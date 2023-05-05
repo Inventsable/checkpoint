@@ -26,6 +26,10 @@ const props = defineProps({
   tooltip: {
     type: String,
     default: ""
+  },
+  strokeWidth: {
+    type: String,
+    default: ".15em"
   }
 })
 
@@ -43,11 +47,17 @@ const value = computed({
   }
 })
 
+const constructVerboseColorModel = (value: ColorValue) => {
+  /**
+   * Add ColorPackage typing for immediate conversion to prevent users needing to do so
+   */
+}
+
 const colorModel = computed<string>(() => {
   if (Object.keys(value.value).includes("cyan"))
     return 'CMYK'
   else if (Object.keys(value.value).includes("hue"))
-    return 'HSL'
+    return 'HSB'
   else if (Object.keys(value.value).includes("red"))
     return 'RGB'
   else return 'UNKNOWN'
@@ -64,7 +74,8 @@ const cannotDisplay = computed<boolean>(() => {
 })
 
 const contextualTooltip = computed<string>(() => {
-  return props.disabled ? "Color picker is disabled when BG is not checked" : cannotDisplay.value ? `Cannot display ${colorModel.value} accurately in UI but will assign correctly` : props.tooltip
+  return props.disabled ? "Color picker is disabled when BG is not checked" : cannotDisplay.value
+    ? `Cannot display ${colorModel.value} but will assign correctly when run` : props.tooltip
 })
 
 function convertCMYKToRGB(cmyk: cmykColor): rgbColor {
@@ -98,23 +109,22 @@ async function openColorPicker() {
         height: `${props.size}px`,
       }" @click="openColorPicker" />
     <svg xmlns="http://www.w3.org/2000/svg" class="color-picker-slash" :width="props.size" :height="props.size"
-      :viewBox="`0 0 ${props.size} ${props.size}`" :style="{
-          opacity: 0.2
-        }">
+      :viewBox="`0 0 ${props.size} ${props.size}`" :style="{}">
       <line :style="{
           stroke: 'var(--color-default)',
           strokeWidth: '.15em',
-          left: props.size / 2
-        }" x1="0" :y1="props.size" :x2="props.size" y2="0" />
+          left: 0
+        }" x1="1.5" :y1="props.size - 1.5" :x2="props.size - 1.5" y2="1.5" />
     </svg>
-    <svg xmlns="http://www.w3.org/2000/svg" :viewBox="`0 0 24 24`" class="alert" v-if="cannotDisplay" :style="{
-        bottom: -1,
-        right: 0,
-        margin: 0,
-        padding: 0,
-        width: `${props.size}`,
-        height: `${props.size}`,
-      }">
+    <svg xmlns="http://www.w3.org/2000/svg" :viewBox="`0 0 24 24`" class="alert" v-if="cannotDisplay && !props.disabled"
+      :style="{
+          bottom: -1,
+          right: 0,
+          margin: 0,
+          padding: 0,
+          width: `${props.size}`,
+          height: `${props.size}`,
+        }">
       <polygon points="23.5 22 1.5 22 12.5 3 23.5 22" :style="{
           fill: `var(--color-alert)`,
           stroke: `black`
@@ -131,6 +141,11 @@ async function openColorPicker() {
   pointer-events: none;
 }
 
+.color-picker-wrapper.disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+}
+
 .color-picker-wrapper {
   box-sizing: border-box;
   width: fit-content;
@@ -145,19 +160,18 @@ async function openColorPicker() {
 .color-picker-slash {
   position: absolute;
   top: 0;
+  left: 0;
 }
 
 .color-picker-wrapper:not(.disabled)>.color-picker-slash {
   display: none;
 }
 
-.color-picker-wrapper.disabled {
-  opacity: 0.7
-}
-
 .color-picker-container {
   box-sizing: border-box;
-  border: .15em solid var(--color-default);
+  border-style: solid;
+  border-color: var(--color-default);
+  border-width: .15em;
   border-radius: 2px;
   cursor: pointer;
 }

@@ -14,4 +14,18 @@ export interface cmykColor {
   black: number;
   typename?: string;
 }
-export type ColorValue = rgbColor | cmykColor;
+export interface hsbColor {
+  hue: number;
+  saturation: number;
+  brightness: number;
+  typename?: string;
+}
+
+export interface ColorPackage {
+  rgb: rgbColor;
+  hsb: hsbColor;
+  cmyk: cmykColor;
+  hex: string;
+}
+
+export type ColorValue = rgbColor | cmykColor | hsbColor;
