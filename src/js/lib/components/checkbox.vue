@@ -23,9 +23,9 @@ function generateQuickGuid(): string {
 </script>
 
 <template>
-  <div class="checkbox-input-wrapper" :style="{
-    fontSize: fontSize || '12px'
-  }">
+  <div class="checkbox-input-wrapper" :title="tooltip" :style="{
+      fontSize: fontSize || '12px'
+    }">
     <input type="checkbox" tabindex="0" :value="modelValue" :checked="modelValue" @input="changeInput"
       @blur="$emit('blur')" :id="uuid" :name="uuid">
     <label :for="uuid" tabindex="0">{{ props.label }}</label>

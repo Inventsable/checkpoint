@@ -189,8 +189,9 @@ onMounted(() => {
       <div class="toolbar-head">
         <InputScroll :min="1" :max="200" label="scale" v-model="displayScaleFactor" suffix="%"
           tooltip="Factor to adjust preview in large artwork" />
-        <ColorPicker v-model="displayBGColor" />
-        <Checkbox label="bg" v-model="includeDisplayBG" @update="val => includeDisplayBG = val" />
+        <ColorPicker v-model="displayBGColor" :disabled="!includeDisplayBG" :size="13.8" />
+        <Checkbox label="bg" tooltip="Simulate BG color of display to prevent app theme conflicts"
+          v-model="includeDisplayBG" @update="val => includeDisplayBG = val" />
 
       </div>
       <div class="toolbar-tail">
@@ -310,7 +311,7 @@ onMounted(() => {
 .toolbar-head {
   display: flex;
   justify-content: center;
-  align-items: first baseline;
+  align-items: center;
   flex-wrap: nowrap;
 }
 
@@ -319,6 +320,15 @@ onMounted(() => {
 }
 
 .toolbar-head>.color-picker-wrapper {
+  margin-bottom: 0;
+}
+
+.toolbar-head>.checkbox-input-wrapper {
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+.toolbar-head>.input-scroll-wrapper {
   margin-top: 3px;
 }
 
@@ -511,10 +521,6 @@ onMounted(() => {
     padding-left: 0px;
     padding-right: 0px;
   }
-
-
-
-
 
   .toolbar-container>* {
     box-sizing: border-box;

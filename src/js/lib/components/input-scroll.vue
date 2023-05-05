@@ -125,13 +125,15 @@ const checkBlur = (event: FocusEvent) => {
 </script>
 
 <template>
-  <div class="input-scroll-wrapper" v-pan.prevent.mouse="panHandle">
-    <label v-if="label" :title="tooltip" :for="uuid" v-pan.prevent.mouse="panHandle">{{ label }}</label>
-    <div class="input-scroll-content" :class="{ focused: hasFocus }">
+  <div class="input-scroll-wrapper" v-pan.prevent.mouse="panHandle" :title="tooltip">
+    <label v-if="label" :for="uuid" v-pan.prevent.mouse="panHandle">{{ label }}</label>
+    <div class="input-scroll-content" :class="{ focused: hasFocus }" :style="{
+      padding: `${(!props.label || !props.label.length) ? '2px 4px' : '2px'}`,
+    }">
       <label class="prefix" v-if="prefix" :for="uuid" v-pan.prevent.mouse="panHandle">{{ prefix }}</label>
       <input type="number" :class="{ focused: hasFocus }" v-pan.prevent.mouse="panHandle" :style="{
           fontSize: fontSize || '13px',
-          width: `${(value + '').split('').length}ch`
+          width: `${(value + '').split('').length}ch`,
         }" :value="value" @input="validateInput" @blur="checkBlur" @focus="hasFocus = true"
         :placeholder="(placeholder || value).toString()" />
       <label class="suffix" v-if="suffix" :for="uuid" v-pan.prevent.mouse="panHandle">{{ suffix }}</label>
@@ -220,7 +222,7 @@ const checkBlur = (event: FocusEvent) => {
   padding: 0px 2px;
 }
 
-.disabled {
+.input-scroll-wrapper.disabled {
   opacity: 0.4;
   pointer-events: none;
 }
