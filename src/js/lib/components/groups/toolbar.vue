@@ -121,7 +121,7 @@ onMounted(() => {
 }
 
 .toolbar-head>* {
-  padding: 0px 6px;
+  margin: 0px 6px;
 }
 
 .toolbar-head>.color-picker-wrapper {

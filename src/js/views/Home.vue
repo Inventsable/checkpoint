@@ -78,10 +78,11 @@ const anchorWidth = computed<number>({
   }),
   handleColor = computed<ColorValue>({
     get: () => settings.handle.style.color,
-    set: (val) => settings.handle.style.color = val
+    set: (val) => {
+      console.log(val);
+      settings.handle.style.color = val
+    }
   })
-
-
 
 
 const CSSVars = [
@@ -100,12 +101,13 @@ const CSSVars = [
 ]
 
 CSSVars.forEach(cssVar => {
-  const isCMYK = (Object.keys(cssVar.value.value).includes("cyan"))
 
   watch(cssVar.value, (value: ColorValue) => {
+    const isCMYK = (Object.keys(cssVar.value.value).includes("cyan"))
     let temp = (!isCMYK ? value : convertCMYKToRGB(value as cmykColor)) as rgbColor;
     setCSS(cssVar.path, `rgba(${temp.red}, ${temp.green}, ${temp.blue}, 1)`)
   }, { deep: true })
+  const isCMYK = (Object.keys(cssVar.value.value).includes("cyan"))
   let temp = (!isCMYK ? cssVar.value.value : convertCMYKToRGB(cssVar.value.value as cmykColor)) as rgbColor;
   setCSS(cssVar.path, `rgba(${temp.red}, ${temp.green}, ${temp.blue}, 1)`)
 })
@@ -120,8 +122,8 @@ CSSVars.forEach(cssVar => {
     </div>
     <div class="settings-bar">
 
-      <div class="toolbar-header">
-        <div class="toolbar-container">
+      <div class="table-header">
+        <div class="table-container">
           <span class="slim-anno">Type</span>
           <span class="wide-anno" style="max-width: 35px">{{ typeSelected }}</span>
           <span>Size</span>
@@ -131,12 +133,12 @@ CSSVars.forEach(cssVar => {
         </div>
       </div>
 
-      <div class="toolbar-row">
+      <div class="table-row">
 
-        <div class="toolbar-indicator">
+        <div class="row-indicator">
           <HandleIcon />
         </div>
-        <div class="toolbar-container">
+        <div class="table-container">
           <HandleIcon @mouseenter="typeHovers.handle = true" @mouseleave="typeHovers.handle = false" />
           <InputScroll :min="1" :max="100" v-model="handleSize" suffix="px" tooltip="Size of handle stroke in pixels" />
 
@@ -145,11 +147,11 @@ CSSVars.forEach(cssVar => {
           <Checkbox v-model="isHandleFilled" @update="val => isHandleFilled = val" />
         </div>
       </div>
-      <div class="toolbar-row">
-        <div class="toolbar-indicator">
+      <div class="table-row">
+        <div class="row-indicator">
           <StickIcon />
         </div>
-        <div class="toolbar-container">
+        <div class="table-container">
           <StickIcon @mouseenter="typeHovers.stick = true" @mouseleave="typeHovers.stick = false" />
           <div class="placeholder"></div>
           <InputScroll :min="0" :max="100" v-model="stickWidth" suffix="px" tooltip="Size of handle stroke in pixels" />
@@ -157,12 +159,12 @@ CSSVars.forEach(cssVar => {
           <div class="placeholder"></div>
         </div>
       </div>
-      <div class="toolbar-row">
-        <div class="toolbar-indicator">
+      <div class="table-row">
+        <div class="row-indicator">
           <AnchorIcon />
         </div>
 
-        <div class="toolbar-container">
+        <div class="table-container">
           <AnchorIcon @mouseenter="typeHovers.anchor = true" @mouseleave="typeHovers.anchor = false" />
           <InputScroll :min="1" :max="100" v-model="anchorSize" suffix="px" tooltip="Size of anchor stroke in pixels" />
 
@@ -171,13 +173,13 @@ CSSVars.forEach(cssVar => {
           <Checkbox v-model="isAnchorFilled" @update="val => isAnchorFilled = val" />
         </div>
       </div>
-      <div class="toolbar-row">
-        <div class="toolbar-indicator">
+      <div class="table-row">
+        <div class="row-indicator">
 
           <OutlineIcon />
         </div>
 
-        <div class="toolbar-container">
+        <div class="table-container">
           <OutlineIcon @mouseenter="typeHovers.outline = true" @mouseleave="typeHovers.outline = false" />
           <div class="placeholder"></div>
           <InputScroll :min="0" :max="100" v-model="outlineWidth" suffix="px" tooltip="Size of handle stroke in pixels" />
@@ -202,7 +204,7 @@ CSSVars.forEach(cssVar => {
   display: none;
 }
 
-.toolbar-indicator {
+.row-indicator {
   display: none;
 }
 
@@ -254,7 +256,7 @@ CSSVars.forEach(cssVar => {
   transition: border-radius 300ms var(--quint) 300ms;
 }
 
-.toolbar-header {
+.table-header {
   padding: 3px;
   display: flex;
   justify-content: flex-start;
@@ -264,7 +266,7 @@ CSSVars.forEach(cssVar => {
   font-size: 9px;
 }
 
-.toolbar-header span {
+.table-header span {
   user-select: none;
   padding-left: 0px;
   padding-right: 0px;
@@ -275,13 +277,13 @@ CSSVars.forEach(cssVar => {
   height: 100%;
 }
 
-.toolbar-row {
+.table-row {
   display: flex;
   justify-content: flex-start;
   align-items: center;
 }
 
-.toolbar-container {
+.table-container {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   align-items: center;
@@ -290,12 +292,12 @@ CSSVars.forEach(cssVar => {
   width: 100%;
 }
 
-.toolbar-container>* {
+.table-container>* {
   /* padding: 0px 10px; */
   text-align: center;
 }
 
-/* .toolbar-container div:not(:first-child) {
+/* .table-container div:not(:first-child) {
   border-left: 1px solid red;
 } */
 
@@ -303,7 +305,7 @@ CSSVars.forEach(cssVar => {
   padding-right: 2px;
 }
 
-.toolbar-row .checkbox-input-wrapper {
+.table-row .checkbox-input-wrapper {
   margin-bottom: 3px;
 }
 
@@ -325,7 +327,7 @@ CSSVars.forEach(cssVar => {
     display: none;
   }
 
-  .toolbar-container>span {
+  .table-container>span {
     text-overflow: ellipsis;
     overflow: hidden;
     white-space: nowrap;
@@ -335,11 +337,11 @@ CSSVars.forEach(cssVar => {
     text-align: center;
   }
 
-  .toolbar-container>span:not(:first-child) {
+  .table-container>span:not(:first-child) {
     padding-left: 1ch;
   }
 
-  .toolbar-container>*:not(span) {
+  .table-container>*:not(span) {
     margin: 2px 0px;
     padding: 2px 0px;
   }
@@ -362,32 +364,32 @@ CSSVars.forEach(cssVar => {
     border-radius: 8px;
   }
 
-  .toolbar-row {
+  .table-row {
     flex-direction: column;
   }
 
-  .toolbar-row:not(:nth-child(3)):not(:nth-child(5)) {
+  .table-row:not(:nth-child(3)):not(:nth-child(5)) {
     padding-bottom: 6px;
   }
 
-  .toolbar-row:not(:nth-child(2)) {
+  .table-row:not(:nth-child(2)) {
     padding-top: 8px;
   }
 
-  .toolbar-row:not(:nth-child(5)) {
+  .table-row:not(:nth-child(5)) {
     border-bottom: 3px solid var(--color-bg);
   }
 
-  .toolbar-indicator {
+  .row-indicator {
     display: inherit;
   }
 
   .toolbar-head,
-  .toolbar-header {
+  .table-header {
     display: none;
   }
 
-  .toolbar-container {
+  .table-container {
     box-sizing: border-box;
     display: flex;
     flex-wrap: wrap;
@@ -397,7 +399,7 @@ CSSVars.forEach(cssVar => {
     padding-right: 0px;
   }
 
-  .toolbar-container>* {
+  .table-container>* {
     box-sizing: border-box;
     max-height: 20px;
     margin-top: 0px;
@@ -411,11 +413,11 @@ CSSVars.forEach(cssVar => {
     align-items: center;
   }
 
-  .toolbar-row:not(:nth-child(5)):not(:nth-child(3)) .toolbar-container {
+  .table-row:not(:nth-child(5)):not(:nth-child(3)) .table-container {
     grid-template-rows: 1fr 1fr;
   }
 
-  .toolbar-row:not(:nth-child(3)) .toolbar-container {
+  .table-row:not(:nth-child(3)) .table-container {
     grid-template-columns: 1fr 1fr;
     display: grid;
   }
@@ -426,7 +428,7 @@ CSSVars.forEach(cssVar => {
     display: inherit;
   }
 
-  .toolbar-container>svg,
+  .table-container>svg,
   .checkbox-input-wrapper>label {
     display: none;
   }
@@ -438,13 +440,13 @@ CSSVars.forEach(cssVar => {
 }
 
 @media screen and (max-width: 121px) {
-  .toolbar-container>* {
+  .table-container>* {
     width: 49%;
   }
 }
 
 @media screen and (max-width: 90px) {
-  .toolbar-container {
+  .table-container {
     display: flex !important;
     justify-content: center;
     align-items: center;
