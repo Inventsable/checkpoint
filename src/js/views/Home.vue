@@ -11,10 +11,13 @@ import InputScroll from '../lib/components/input-scroll.vue'
 import AnchorIcon from '../lib/components/anchor-icon.vue'
 import StickIcon from '../lib/components/stick-icon.vue'
 import OutlineIcon from '../lib/components/outline-icon.vue'
-import ToolbarButton from '../lib/components/toolbar-button.vue'
 import HandleIcon from '../lib/components/handle-icon.vue'
 import ColorPicker from '../lib/components/color-picker.vue'
+import Toolbar from '../lib/components/groups/toolbar.vue'
 import { ColorValue, rgbColor, cmykColor } from "../../shared/shared";
+import {
+  setCSS, convertCMYKToRGB
+} from "../lib/utils/app";
 
 const settings = useSettings()
 
@@ -26,14 +29,6 @@ const isHandleFilled = ref(settings.handle.style.filled);
 watch(isHandleFilled, (value) => {
   settings.handle.style.filled = value;
 })
-
-const includeDisplayBG = ref(settings.options.displayBG.include);
-
-const setCSS = (prop: string, data: string): void => {
-  document.documentElement.style.setProperty(
-    prop, data
-  );
-}
 
 const typeHovers = ref({
   handle: false,
@@ -84,22 +79,10 @@ const anchorWidth = computed<number>({
   handleColor = computed<ColorValue>({
     get: () => settings.handle.style.color,
     set: (val) => settings.handle.style.color = val
-  }),
-  displayBGColor = computed<ColorValue>({
-    get: () => settings.options.displayBG.color,
-    set: (val) => settings.options.displayBG.color = val
-  }), displayScaleFactor = computed<number>({
-    get: () => settings.options.scaleFactor,
-    set: (val) => settings.options.scaleFactor = val
   })
 
-function convertCMYKToRGB(cmyk: cmykColor): rgbColor {
-  const { cyan, magenta, yellow, black } = cmyk as cmykColor;
-  const red = Math.round(255 * (1 - cyan / 100) * (1 - black / 100));
-  const green = Math.round(255 * (1 - magenta / 100) * (1 - black / 100));
-  const blue = Math.round(255 * (1 - yellow / 100) * (1 - black / 100));
-  return { red, green, blue } as rgbColor;
-}
+
+
 
 const CSSVars = [
   {
@@ -127,78 +110,11 @@ CSSVars.forEach(cssVar => {
   setCSS(cssVar.path, `rgba(${temp.red}, ${temp.green}, ${temp.blue}, 1)`)
 })
 
-watch(displayBGColor, (value) => {
-  const isCMYK = (Object.keys(displayBGColor.value).includes("cyan"))
-  if (settings.options.displayBG.include) {
-    let temp = (!isCMYK ? value : convertCMYKToRGB(value as cmykColor)) as rgbColor;
-    setCSS('--display-bg', `rgba(${temp.red}, ${temp.green}, ${temp.blue}, 1)`)
-  }
-}, { deep: true })
-
-watch(includeDisplayBG, (value) => {
-  settings.options.displayBG.include = value;
-  if (!value)
-    setCSS('--display-bg', `transparent`)
-  else {
-    let temp = settings.options.displayBG.color as ColorValue;
-    if (Object.keys(settings.options.displayBG.color).includes("cyan")) {
-      temp = convertCMYKToRGB(settings.options.displayBG.color as cmykColor) as rgbColor;
-    }
-    // @ts-ignore
-    setCSS('--display-bg', `rgba(${temp.red}, ${temp.green}, ${temp.blue}, 1)`)
-  }
-})
-function loadDisplayBG() {
-  const value = settings.options.displayBG.include;
-  if (!value)
-    setCSS('--display-bg', `transparent`)
-  else {
-    let temp = settings.options.displayBG.color as ColorValue;
-    if (Object.keys(settings.options.displayBG.color).includes("cyan")) {
-      temp = convertCMYKToRGB(settings.options.displayBG.color as cmykColor) as rgbColor;
-    }
-    // @ts-ignore
-    setCSS('--display-bg', `rgba(${temp.red}, ${temp.green}, ${temp.blue}, 1)`)
-  }
-}
-
-function forcePopup() {
-  function openPopup() {
-    csi.requestOpenExtension("com.hardhat.cep.settings", "")
-  }
-  openPopup()
-  setTimeout(() => {
-    openPopup();
-  }, 1000);
-}
-
-function refresh() {
-  setTimeout(() => {
-    location.reload()
-  }, 200);
-}
-
-onMounted(() => {
-  loadDisplayBG();
-})
 </script>
 
 <template>
   <div class="home-content">
-    <div class="toolbar">
-      <div class="toolbar-head">
-        <InputScroll :min="1" :max="200" label="scale" v-model="displayScaleFactor" suffix="%"
-          tooltip="Factor to adjust preview in large artwork" />
-        <ColorPicker v-model="displayBGColor" :disabled="!includeDisplayBG" :size="13.8" />
-        <Checkbox label="bg" tooltip="Simulate BG color of display to prevent app theme conflicts"
-          v-model="includeDisplayBG" @update="val => includeDisplayBG = val" />
-
-      </div>
-      <div class="toolbar-tail">
-        <ToolbarButton tooltip="Open Help Window" icon="help" icon-size="16px" @click="forcePopup" />
-        <ToolbarButton tooltip="Refresh Extension" icon="refresh" icon-size="16px" @click="refresh" />
-      </div>
-    </div>
+    <Toolbar />
     <div class="preview">
       <Preview />
     </div>
@@ -290,47 +206,6 @@ onMounted(() => {
   display: none;
 }
 
-.toolbar {
-  box-sizing: border-box;
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  height: 24px;
-  padding: 3px 12px;
-  max-width: 300px;
-  margin: auto;
-}
-
-.toolbar-tail {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: nowrap;
-}
-
-.toolbar-head {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: nowrap;
-}
-
-.toolbar-head>* {
-  padding: 0px 6px;
-}
-
-.toolbar-head>.color-picker-wrapper {
-  margin-bottom: 0;
-}
-
-.toolbar-head>.checkbox-input-wrapper {
-  margin-top: 0px;
-  margin-bottom: 0px;
-}
-
-.toolbar-head>.input-scroll-wrapper {
-  margin-top: 3px;
-}
 
 .preview {
   overflow: hidden;

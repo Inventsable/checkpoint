@@ -72,7 +72,7 @@ async function openColorPicker() {
         width: `${props.size}px`,
         height: `${props.size}px`
       }" @click="openColorPicker" />
-    <svg xmlns="http://www.w3.org/2000/svg" class="color-picker-slash" :width="props.size" height="props.size"
+    <svg xmlns="http://www.w3.org/2000/svg" class="color-picker-slash" :width="props.size" :height="props.size"
       :viewBox="`0 0 ${props.size} ${props.size}`">
       <line :style="{
           stroke: 'var(--color-default)',
