@@ -1,5 +1,6 @@
 <script setup lang="ts">
 //@ts-nocheck
+import { setCSS } from '../utils/app';
 import { onMounted, ref, watch } from 'vue'
 import * as lottie from "lottie-web";
 import { useSettings } from '../../stores/settings';
@@ -67,14 +68,6 @@ const sliderEnums = [
     keypath: `Master,Effects,Stem Width, 0`,
     callback: (value) => settings.outline.style.width * (settings.options.scaleFactor / 100)
   },
-  {
-    keypath: `Master,Effects,Anchor Filled, 0`,
-    callback: (value) => settings.anchor.style.filled ? 1 : 0
-  },
-  {
-    keypath: `Master,Effects,Handle Filled, 0`,
-    callback: (value) => settings.handle.style.filled ? 1 : 0
-  }
 ]
 
 function getUniqueRoll() {
@@ -87,11 +80,9 @@ function getUniqueRoll() {
     return rollIndex
   }
 }
-
 const animationFile = animations[rollNumber]
 
 onMounted(() => {
-
   anim.value = buildAnimation();
   animAPI.value = (lottie_api as LottieApi).createAnimationApi(anim.value);
   anim.value.addEventListener('loopComplete', () => {
@@ -122,7 +113,6 @@ function buildAnimation() {
   }
   return lottie.loadAnimation(animData);
 }
-
 
 </script>
 
@@ -162,13 +152,7 @@ function buildAnimation() {
 }
 
 .anchorFill {
-  fill: var(--anchor-stroke-color);
-  transition: fill 200ms var(--quart) 0ms;
-}
-
-.anchorFillMask {
-  /* fill: var(--color-bg); */
-  fill: transparent;
+  fill: var(--anchor-fill-color);
   transition: fill 200ms var(--quart) 0ms;
 }
 
@@ -178,13 +162,7 @@ function buildAnimation() {
 }
 
 .handleFill {
-  fill: var(--handle-stroke-color);
-  transition: fill 200ms var(--quart) 0ms;
-}
-
-.handleFillMask {
-  /* fill: var(--color-bg); */
-  fill: transparent;
+  fill: var(--handle-fill-color);
   transition: fill 200ms var(--quart) 0ms;
 }
 

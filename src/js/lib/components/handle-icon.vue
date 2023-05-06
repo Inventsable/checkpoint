@@ -6,10 +6,11 @@ const settings = useSettings();
 <template>
   <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 20 20">
     <rect id="handle" :style="{
-      fill: settings.handle.style.filled ? 'var(--handle-stroke-color)' : 'transparent',
+      fill: 'var(--handle-fill-color)',
       stroke: 'var(--handle-stroke-color)',
-      strokeWidth: '3px'
-      // strokeWidth: settings.anchor.style.width * (settings.options.scaleFactor / 100)
+      strokeWidth: '3px',
+      transition: `fill 140ms var(--quart) 0ms,
+      opacity 200ms var(--quint) 20ms`
     }" x="5" y="5" width="10" height="10" rx="5" />
   </svg>
 </template>

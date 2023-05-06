@@ -1,24 +1,21 @@
 <svg id="Checkbox" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
   <defs>
     <style>
-      .cls-1{fill:none;}.cls-2{fill:#23a049;}.cls-3{fill:#010101;}.cls-4{fill:#ed1f24;}.cls-5{fill:#eadf14;}.cls-6{fill:#0e0708;}</style>
+      .cls-1{fill:none;}.cls-2{fill:#229f49;}.cls-3{fill:#ec1e24;}.cls-4{fill:#e9de14;}.cls-5{fill:#0e0708;}</style>
   </defs>
-  <rect id="frame" class="cls-1" width="24" height="24" />
-  <rect id="fill" class="cls-2" x="4" y="4" width="16" height="16" />
-  <g id="stroke_indicator" data-name="stroke indicator">
-    <rect class="cls-3" x="8" y="8" width="8" height="8" />
-  </g>
-  <path id="slash" class="cls-4"
+  <path id="frame" class="cls-1" d="M0,0V24H24V0Z" />
+
+  <path id="slash" class="cls-3"
     d="M21.93,3.48,3.48,21.93a2,2,0,0,1-1.41-1.41L20.52,2.07A2,2,0,0,1,21.93,3.48Z" />
   <g id="border">
-    <path class="cls-3"
+    <path
       d="M21.93,3.48a2,2,0,0,0-1.41-1.41A1.77,1.77,0,0,0,20,2H4A2,2,0,0,0,2,4V20a1.77,1.77,0,0,0,.07.52,2,2,0,0,0,1.41,1.41A1.77,1.77,0,0,0,4,22H20a2,2,0,0,0,2-2V4A1.77,1.77,0,0,0,21.93,3.48ZM20,20H4V4H20Z" />
   </g>
   <g id="alert">
-    <path class="cls-5"
+    <path class="cls-4"
       d="M3.94,21.5a1.39,1.39,0,0,1-1.22-.71,1.42,1.42,0,0,1,0-1.41L10.78,5.46a1.41,1.41,0,0,1,2.44,0l8.06,13.92a1.42,1.42,0,0,1-1.22,2.12Z" />
-    <path class="cls-6"
+    <path class="cls-5"
       d="M12,5.26a.88.88,0,0,1,.79.46l8.06,13.91A.92.92,0,0,1,20.06,21H3.94a.92.92,0,0,1-.79-1.37L11.21,5.72A.88.88,0,0,1,12,5.26m0-1a1.92,1.92,0,0,0-1.66,1l-8,13.92A1.91,1.91,0,0,0,3.94,22H20.06a1.91,1.91,0,0,0,1.65-2.87l-8-13.92a1.92,1.92,0,0,0-1.66-1Z" />
-    <path class="cls-6" d="M13.08,16.58v2.17H10.92V16.58ZM10.92,9v5.41h2.16V9Z" />
+    <path class="cls-5" d="M13.08,16.58v2.17H10.92V16.58ZM10.92,9v5.41h2.16V9Z" />
   </g>
 </svg>

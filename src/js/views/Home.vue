@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref, computed, watch } from "vue";
+import { onMounted, ref, computed, watch, Ref } from "vue";
 import { fs, os, path, child_process } from "../lib/utils/node";
 import { csi, evalES, evalFile, openLinkInBrowser } from "../lib/utils/utils";
 import { useSettings } from '../stores/settings';
@@ -25,15 +25,6 @@ const fakeColor = ref({
 })
 
 const settings = useSettings()
-
-const isAnchorFilled = ref(settings.anchor.style.filled);
-watch(isAnchorFilled, (value) => {
-  settings.anchor.style.filled = value;
-})
-const isHandleFilled = ref(settings.handle.style.filled);
-watch(isHandleFilled, (value) => {
-  settings.handle.style.filled = value;
-})
 
 const typeHovers = ref({
   handle: false,
@@ -84,12 +75,45 @@ const anchorWidth = computed<number>({
   handleColor = computed<ColorValue>({
     get: () => settings.handle.style.color,
     set: (val) => {
-      console.log(val);
       settings.handle.style.color = val
     }
   })
 
+const watchAndSetCSSToggleFillColor = (watchedValue: Ref, CSSPath: string, colorValue: Ref): void => {
+  watch(watchedValue, (value) => {
+    if (value) {
+      const isCMYK = (Object.keys(colorValue.value).includes("cyan"))
+      let temp = (!isCMYK ? colorValue.value : convertCMYKToRGB(colorValue.value as cmykColor)) as rgbColor;
+      setCSS(CSSPath, `rgba(${temp.red}, ${temp.green}, ${temp.blue}, 1)`)
+    } else setCSS(CSSPath, `transparent`)
+  })
+  if (watchedValue.value) {
+    const isCMYK = (Object.keys(colorValue.value).includes("cyan"))
+    let temp = (!isCMYK ? colorValue.value : convertCMYKToRGB(colorValue.value as cmykColor)) as rgbColor;
+    setCSS(CSSPath, `rgba(${temp.red}, ${temp.green}, ${temp.blue}, 1)`)
+  } else setCSS(CSSPath, `transparent`)
+}
 
+const isHandleFilled = ref(settings.handle.style.filled);
+const isAnchorFilled = ref(settings.anchor.style.filled);
+watchAndSetCSSToggleFillColor(isHandleFilled, '--handle-fill-color', handleColor)
+watchAndSetCSSToggleFillColor(isAnchorFilled, '--anchor-fill-color', anchorColor)
+
+const watchStrokeColor = (cssVar: CSSVar): void => {
+  watch(cssVar.value, (value: ColorValue) => {
+    const isCMYK = (Object.keys(cssVar.value.value).includes("cyan"))
+    let temp = (!isCMYK ? value : convertCMYKToRGB(value as cmykColor)) as rgbColor;
+    setCSS(cssVar.path, `rgba(${temp.red}, ${temp.green}, ${temp.blue}, 1)`)
+  }, { deep: true })
+  const isCMYK = (Object.keys(cssVar.value.value).includes("cyan"))
+  let temp = (!isCMYK ? cssVar.value.value : convertCMYKToRGB(cssVar.value.value as cmykColor)) as rgbColor;
+  setCSS(cssVar.path, `rgba(${temp.red}, ${temp.green}, ${temp.blue}, 1)`)
+}
+
+interface CSSVar {
+  path: string,
+  value: Ref
+}
 const CSSVars = [
   {
     path: "--anchor-stroke-color",
@@ -104,18 +128,7 @@ const CSSVars = [
     value: outlineColor
   },
 ]
-
-CSSVars.forEach(cssVar => {
-
-  watch(cssVar.value, (value: ColorValue) => {
-    const isCMYK = (Object.keys(cssVar.value.value).includes("cyan"))
-    let temp = (!isCMYK ? value : convertCMYKToRGB(value as cmykColor)) as rgbColor;
-    setCSS(cssVar.path, `rgba(${temp.red}, ${temp.green}, ${temp.blue}, 1)`)
-  }, { deep: true })
-  const isCMYK = (Object.keys(cssVar.value.value).includes("cyan"))
-  let temp = (!isCMYK ? cssVar.value.value : convertCMYKToRGB(cssVar.value.value as cmykColor)) as rgbColor;
-  setCSS(cssVar.path, `rgba(${temp.red}, ${temp.green}, ${temp.blue}, 1)`)
-})
+CSSVars.forEach((cssVar: CSSVar): void => watchStrokeColor(cssVar))
 
 </script>
 
@@ -137,9 +150,7 @@ CSSVars.forEach(cssVar => {
           <span>Filled</span>
         </div>
       </div>
-
       <div class="table-row">
-
         <div class="row-indicator" title="Handle">
           <HandleIcon />
         </div>
@@ -202,6 +213,8 @@ CSSVars.forEach(cssVar => {
   --handle-stroke-color: #FFEE00;
   --stick-stroke-color: #FFEE00;
   --outline-stroke-color: #ffffffcc;
+  --handle-fill-color: #FFEE00;
+  --anchor-fill-color: #FFEE00;
 }
 
 .slim-anno {

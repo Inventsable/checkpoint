@@ -112,16 +112,14 @@ async function openColorPicker() {
       maxWidth: `${props.size}px`
     }">
     <svg xmlns="http://www.w3.org/2000/svg" class="color-picker-content" :width="props.size" :height="props.size"
-      :viewBox="`0 0 24 24`" :style="{}" @click="openColorPicker">
-      <mask id="stroke-indicator">
-        <g style="transform-origin: center; transform-box: fill-box;">
-          <rect class="color-picker-fill" x="4" y="4" width="16" height="16" fill="white" />
-          <rect x="8" y="8" width="8" height="8" fill="black" />
-        </g>
-      </mask>
-      <rect class="color-picker-fill" x="4" y="4" width="16" height="16" :style="{
+      :viewBox="`0 0 24 24`" @click="openColorPicker">
+      <path class="color-picker-stroke-indicator" d="M4,4V20H20V4ZM16,16H8V8h8Z" :style="{
           fill: props.disabled && !props.showDisabledColor ? `transparent` : `rgb(${simulatedColor.red}, ${simulatedColor.green}, ${simulatedColor.blue})`,
-        }" :mask="!props.fill ? 'url(#stroke-indicator)' : ''" />
+        }" />
+      <rect class="color-picker-fill-indicator" x="7" y="7" width="10" height="10" :style="{
+          fill: props.disabled && !props.showDisabledColor ? `transparent` : `rgb(${simulatedColor.red}, ${simulatedColor.green}, ${simulatedColor.blue})`,
+          opacity: props.fill ? 1 : 0
+        }" />
       <path class="color-picker-slash" d="M21.93,3.48,3.48,21.93a2,2,0,0,1-1.41-1.41L20.52,2.07A2,2,0,0,1,21.93,3.48Z"
         :style="{
             fill: 'red',
@@ -148,8 +146,11 @@ async function openColorPicker() {
   fill: black;
 }
 
-.color-picker-fill {
-  transition: fill 140ms var(--quart) 0ms;
+.color-picker-fill,
+.color-picker-fill-indicator,
+.color-picker-stroke-indicator {
+  transition: fill 140ms var(--quart) 0ms,
+    opacity 200ms var(--quint) 20ms
 }
 
 .color-picker-alert,
