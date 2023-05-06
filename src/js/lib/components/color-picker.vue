@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { computed, ref, useSlots } from 'vue'
 import { evalES } from '../utils/utils';
-import type { ColorValue, rgbColor, cmykColor } from '../../../shared/shared';
+import type { ColorValue, rgbColor, cmykColor, ColorPackage, hsbColor } from '../../../shared/shared';
+import { rgbToHsb, convertCMYKToRGB } from '../utils/app';
+
 const props = defineProps({
   modelValue: {
     type: Object as () => ColorValue,
@@ -55,10 +57,37 @@ const value = computed({
   }
 })
 
-const constructVerboseColorModel = (value: ColorValue) => {
-  /**
-   * Add ColorPackage typing for immediate conversion to prevent users needing to do so
-   */
+const verboseValue = computed(() => {
+  return getVerbosePackage(value.value)
+})
+
+const getVerbosePackage = (val: ColorValue): ColorPackage => {
+  const result = {
+    rgb: {
+      red: 50,
+      green: 50,
+      blue: 50
+    } as rgbColor,
+    hsb: {
+      hue: 1,
+      saturation: 1,
+      brightness: 1
+    } as hsbColor,
+    cmyk: {
+      cyan: 40,
+      magenta: 40,
+      yellow: 40,
+      black: 40
+    } as cmykColor,
+    hex: "#ff0000"
+  }
+  if (colorModel.value == 'CMYK') {
+    console.log("CMYK:", val)
+    // result.cmyk = val
+  } else if (colorModel.value == 'RGB') {
+    console.log("RGB:", val)
+  }
+  return result;
 }
 
 const colorModel = computed<string>(() => {
@@ -85,14 +114,6 @@ const contextualTooltip = computed<string>(() => {
   return props.disabled ? "Color picker is disabled when BG is not checked" : cannotDisplay.value
     ? `Cannot display ${colorModel.value} but will assign correctly when run` : props.tooltip
 })
-
-function convertCMYKToRGB(cmyk: cmykColor): rgbColor {
-  const { cyan, magenta, yellow, black } = cmyk as cmykColor;
-  const red = Math.round(255 * (1 - cyan / 100) * (1 - black / 100));
-  const green = Math.round(255 * (1 - magenta / 100) * (1 - black / 100));
-  const blue = Math.round(255 * (1 - yellow / 100) * (1 - black / 100));
-  return { red, green, blue } as rgbColor
-}
 
 async function openColorPicker() {
   const result = JSON.parse(await evalES(`getColorFromPicker('${JSON.stringify(value.value)}')`)) as ColorValue

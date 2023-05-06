@@ -5,7 +5,7 @@ import Checkbox from '../checkbox.vue';
 import ColorPicker from '../color-picker.vue';
 import { useSettings } from '../../../stores/settings';
 import { onMounted, ref, computed, watch } from "vue";
-import { ColorValue } from '../../../../shared/shared';
+import { ColorValue, cmykColor, rgbColor } from '../../../../shared/shared';
 import { csi } from '../../utils/utils';
 import {
   setCSS, convertCMYKToRGB

@@ -1,5 +1,3 @@
 - Needs input-scroll autoselect
 - Potential link to Swatches or themes per Antonio's feedback. If users want to use it on certain artwork with same color schemes often then it'd make sense for them to be able to link multiple themes
-- Animation file that spreads from centers to middle has deadline in center of STEM outline layer
 - Color-Picker should have more verbose secondary data like auto conversion to HSB, CMYK, and hex
-- SVG mask for stroke-indicator breaks after panel width changes? That's weird. It might be better to just cut out the shapes entirely instead of using masks at all
