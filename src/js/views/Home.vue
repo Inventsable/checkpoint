@@ -147,7 +147,8 @@ CSSVars.forEach(cssVar => {
           <HandleIcon @mouseenter="typeHovers.handle = true" @mouseleave="typeHovers.handle = false" />
           <InputScroll :min="1" :max="100" v-model="handleSize" suffix="px" tooltip="Size of handle width/height in px" />
           <InputScroll :min="0" :max="100" v-model="handleWidth" suffix="px" tooltip="Size of handle stroke in px" />
-          <ColorPicker v-model="handleColor" title="Handle color" />
+          <ColorPicker v-model="handleColor" :title="`Handle stroke ${isHandleFilled ? 'and fill ' : ''}color`"
+            :fill="isHandleFilled" />
           <Checkbox v-model="isHandleFilled" @update="val => isHandleFilled = val" title="Add fill to handle" />
         </div>
       </div>
@@ -159,8 +160,8 @@ CSSVars.forEach(cssVar => {
           <StickIcon @mouseenter="typeHovers.stick = true" @mouseleave="typeHovers.stick = false" />
           <div class="placeholder" />
           <InputScroll :min="0" :max="100" v-model="stickWidth" suffix="px" tooltip="Size of stick stroke in px" />
-          <ColorPicker v-model="fakeColor" :disabled="true" class="fake-color"
-            title="Sticks inherit handle color above" />
+          <ColorPicker v-model="handleColor" :disabled="true" class="fake-color" override-alerts
+            title="Stick strokes inherit handle color above" :fill="false" />
           <div class="placeholder" />
         </div>
       </div>
@@ -173,7 +174,8 @@ CSSVars.forEach(cssVar => {
           <AnchorIcon @mouseenter="typeHovers.anchor = true" @mouseleave="typeHovers.anchor = false" />
           <InputScroll :min="1" :max="100" v-model="anchorSize" suffix="px" tooltip="Size of anchor width/height in px" />
           <InputScroll :min="0" :max="100" v-model="anchorWidth" suffix="px" tooltip="Size of anchor stroke in px" />
-          <ColorPicker v-model="anchorColor" title="Anchor color" />
+          <ColorPicker v-model="anchorColor" :title="`Anchor stroke ${isAnchorFilled ? 'and fill ' : ''}color`"
+            :fill="isAnchorFilled" />
           <Checkbox v-model="isAnchorFilled" @update="val => isAnchorFilled = val" title="Add fill to anchor" />
         </div>
       </div>
@@ -185,7 +187,7 @@ CSSVars.forEach(cssVar => {
           <OutlineIcon @mouseenter="typeHovers.outline = true" @mouseleave="typeHovers.outline = false" />
           <div class="placeholder" />
           <InputScroll :min="0" :max="100" v-model="outlineWidth" suffix="px" tooltip="Size of outline stroke in px" />
-          <ColorPicker v-model="outlineColor" />
+          <ColorPicker v-model="outlineColor" title="Outline stroke color" :fill="false" />
           <div class="placeholder" />
         </div>
       </div>

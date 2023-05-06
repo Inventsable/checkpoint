@@ -17,7 +17,7 @@ const props = defineProps({
   },
   size: {
     type: Number,
-    default: 20
+    default: 14
   },
   disabled: {
     type: Boolean,
@@ -27,13 +27,9 @@ const props = defineProps({
     type: String,
     default: ""
   },
-  fill: {
-    type: Boolean,
-    default: true
-  },
-  overrideAlerts: {
-    type: Boolean,
-    default: false
+  strokeWidth: {
+    type: String,
+    default: ".15em"
   }
 })
 
@@ -104,65 +100,89 @@ async function openColorPicker() {
 
 <template>
   <div class="color-picker-wrapper" :class="{ disabled }" :title="contextualTooltip" :style="{
-      maxHeight: `${props.size}px`,
-      maxWidth: `${props.size}px`
+      maxWidth: `calc(${props.size}px + .3em)`,
+      maxHeight: `calc(${props.size}px + .3em)`,
     }">
-    <svg xmlns="http://www.w3.org/2000/svg" class="color-picker-content" :width="props.size" :height="props.size"
-      :viewBox="`0 0 24 24`" :style="{}" @click="openColorPicker">
-      <mask id="stroke-indicator">
-        <g style="transform-origin: center; transform-box: fill-box;">
-          <rect class="color-picker-fill" x="4" y="4" width="16" height="16" fill="white" />
-          <rect x="8" y="8" width="8" height="8" fill="black" />
-        </g>
-      </mask>
-      <rect class="color-picker-fill" x="4" y="4" width="16" height="16" :style="{
-          fill: `rgb(${simulatedColor.red}, ${simulatedColor.green}, ${simulatedColor.blue})`,
-        }" :mask="!props.fill ? 'url(#stroke-indicator)' : ''" />
-      <path v-if="disabled" class="color-picker-slash"
-        d="M21.93,3.48,3.48,21.93a2,2,0,0,1-1.41-1.41L20.52,2.07A2,2,0,0,1,21.93,3.48Z" style="fill: red" />
-      <path class="color-picker-border"
-        d="M21.93,3.48a2,2,0,0,0-1.41-1.41A1.77,1.77,0,0,0,20,2H4A2,2,0,0,0,2,4V20a1.77,1.77,0,0,0,.07.52,2,2,0,0,0,1.41,1.41A1.77,1.77,0,0,0,4,22H20a2,2,0,0,0,2-2V4A1.77,1.77,0,0,0,21.93,3.48ZM20,20H4V4H20Z" />
-      <g class="alert" :style="{
-          opacity: (cannotDisplay && !props.overrideAlerts) ? .75 : 0
-        }">
-        <path style="fill: #f5bd00"
-          d="M3.94,21.5a1.39,1.39,0,0,1-1.22-.71,1.42,1.42,0,0,1,0-1.41L10.78,5.46a1.41,1.41,0,0,1,2.44,0l8.06,13.92a1.42,1.42,0,0,1-1.22,2.12Z" />
-        <path style="fill: black"
-          d="M12,5.26a.88.88,0,0,1,.79.46l8.06,13.91A.92.92,0,0,1,20.06,21H3.94a.92.92,0,0,1-.79-1.37L11.21,5.72A.88.88,0,0,1,12,5.26m0-1a1.92,1.92,0,0,0-1.66,1l-8,13.92A1.91,1.91,0,0,0,3.94,22H20.06a1.91,1.91,0,0,0,1.65-2.87l-8-13.92a1.92,1.92,0,0,0-1.66-1Z" />
-        <path style="fill: black" d="M13.08,16.58v2.17H10.92V16.58ZM10.92,9v5.41h2.16V9Z" />
-      </g>
+    <div class="color-picker-container" :style="{
+        backgroundColor: `rgba(${simulatedColor.red}, ${simulatedColor.green}, ${simulatedColor.blue}, 1)`,
+        width: `${props.size}px`,
+        height: `${props.size}px`,
+      }" @click="openColorPicker" />
+    <svg xmlns="http://www.w3.org/2000/svg" class="color-picker-slash" :width="props.size" :height="props.size"
+      :viewBox="`0 0 ${props.size} ${props.size}`" :style="{}">
+      <line :style="{
+          stroke: 'var(--color-default)',
+          strokeWidth: '.15em',
+          left: 0
+        }" x1="1.5" :y1="props.size - 1.5" :x2="props.size - 1.5" y2="1.5" />
     </svg>
-
+    <svg xmlns="http://www.w3.org/2000/svg" :viewBox="`0 0 24 24`" class="alert" v-if="cannotDisplay && !props.disabled"
+      :style="{
+          bottom: -1,
+          right: 0,
+          margin: 0,
+          padding: 0,
+          width: `${props.size}`,
+          height: `${props.size}`,
+        }">
+      <polygon points="23.5 22 1.5 22 12.5 3 23.5 22" :style="{
+          fill: `var(--color-alert)`,
+          stroke: `black`
+        }" />
+      <path :style="{
+          fill: `black`
+        }" d="M13,16.5v2H11v-2Zm-2-7v5h2v-5Z" transform="translate(0.5 0.5)" />
+    </svg>
   </div>
 </template>
 
 <style>
-.color-picker-border {
-  fill: black;
+.color-picker-wrapper>svg {
+  pointer-events: none;
 }
 
-.color-picker-fill {
-  transition: fill 180ms var(--quart) 20ms
+.color-picker-wrapper.disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
 }
 
 .color-picker-wrapper {
   box-sizing: border-box;
   width: fit-content;
+  margin: auto;
+  margin-bottom: 0px;
+  margin-top: 0px;
   overflow: hidden;
   position: relative;
   padding: 0px !important;
-  margin: 0px !important;
 }
 
-.color-picker-wrapper:not(.disabled) svg {
+.color-picker-slash {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.color-picker-wrapper:not(.disabled)>.color-picker-slash {
+  display: none;
+}
+
+.color-picker-container {
+  box-sizing: border-box;
+  border-style: solid;
+  border-color: var(--color-default);
+  border-width: .15em;
+  border-radius: 2px;
   cursor: pointer;
 }
 
-.color-picker-wrapper.disabled {
-  cursor: not-allowed;
+.color-picker-wrapper.disabled>.color-picker-container {
+  pointer-events: none;
+  background: var(--color-bg) !important;
 }
 
-.color-picker-wrapper.disabled svg {
-  pointer-events: none;
+.color-picker-wrapper>.alert {
+  position: absolute;
+  opacity: 0.75
 }
 </style>
