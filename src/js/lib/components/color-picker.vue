@@ -34,6 +34,10 @@ const props = defineProps({
   overrideAlerts: {
     type: Boolean,
     default: false
+  },
+  showDisabledColor: {
+    type: Boolean,
+    default: false,
   }
 })
 
@@ -116,10 +120,13 @@ async function openColorPicker() {
         </g>
       </mask>
       <rect class="color-picker-fill" x="4" y="4" width="16" height="16" :style="{
-          fill: `rgb(${simulatedColor.red}, ${simulatedColor.green}, ${simulatedColor.blue})`,
+          fill: props.disabled && !props.showDisabledColor ? `transparent` : `rgb(${simulatedColor.red}, ${simulatedColor.green}, ${simulatedColor.blue})`,
         }" :mask="!props.fill ? 'url(#stroke-indicator)' : ''" />
-      <path v-if="disabled" class="color-picker-slash"
-        d="M21.93,3.48,3.48,21.93a2,2,0,0,1-1.41-1.41L20.52,2.07A2,2,0,0,1,21.93,3.48Z" style="fill: red" />
+      <path class="color-picker-slash" d="M21.93,3.48,3.48,21.93a2,2,0,0,1-1.41-1.41L20.52,2.07A2,2,0,0,1,21.93,3.48Z"
+        :style="{
+            fill: 'red',
+            opacity: props.disabled ? 1 : 0
+          }" />
       <path class="color-picker-border"
         d="M21.93,3.48a2,2,0,0,0-1.41-1.41A1.77,1.77,0,0,0,20,2H4A2,2,0,0,0,2,4V20a1.77,1.77,0,0,0,.07.52,2,2,0,0,0,1.41,1.41A1.77,1.77,0,0,0,4,22H20a2,2,0,0,0,2-2V4A1.77,1.77,0,0,0,21.93,3.48ZM20,20H4V4H20Z" />
       <g class="alert" :style="{
@@ -142,7 +149,12 @@ async function openColorPicker() {
 }
 
 .color-picker-fill {
-  transition: fill 180ms var(--quart) 20ms
+  transition: fill 140ms var(--quart) 0ms;
+}
+
+.color-picker-alert,
+.color-picker-slash {
+  transition: opacity 200ms var(--quint) 20ms;
 }
 
 .color-picker-wrapper {

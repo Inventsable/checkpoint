@@ -161,7 +161,7 @@ CSSVars.forEach(cssVar => {
           <div class="placeholder" />
           <InputScroll :min="0" :max="100" v-model="stickWidth" suffix="px" tooltip="Size of stick stroke in px" />
           <ColorPicker v-model="handleColor" :disabled="true" class="fake-color" override-alerts
-            title="Stick strokes inherit handle color above" :fill="false" />
+            title="This stroke inherits handle color above" :fill="false" show-disabled-color />
           <div class="placeholder" />
         </div>
       </div>

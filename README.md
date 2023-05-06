@@ -1,3 +1,4 @@
 - Needs input-scroll autoselect
 - Potential link to Swatches or themes per Antonio's feedback. If users want to use it on certain artwork with same color schemes often then it'd make sense for them to be able to link multiple themes
-- Color-Picker would probably be best as pure SVG. It'd solve all positional issues
+- Animation file that spreads from centers to middle has deadline in center of STEM outline layer
+- Color-Picker should have more verbose secondary data like auto conversion to HSB, CMYK, and hex
