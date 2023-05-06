@@ -55,6 +55,7 @@ const slots = useSlots();
 
 .toolbar-button-wrapper:hover {
   background-color: var(--color-btn-pill-border);
+  border-color: var(--color-btn-pill-border);
   color: var(--color-bg);
   filter: drop-shadow(2px 3px 4px rgba(0, 0, 0, 0.75));
 }

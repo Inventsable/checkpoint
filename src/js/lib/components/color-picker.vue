@@ -60,7 +60,6 @@ const value = computed({
 })
 
 const getVerbosePackage = (val: ColorValue): ColorPackage => {
-  console.log("GET VERBOSE:")
   const result = {
     RGB: {
       red: 50,
@@ -82,7 +81,6 @@ const getVerbosePackage = (val: ColorValue): ColorPackage => {
     model: colorModel.value
   }
   if (colorModel.value == 'CMYK') {
-    console.log("CMYK:", val)
     result.CMYK = val as cmykColor;
     result.RGB = convertCMYKToRGB(val as cmykColor);
     result.HSB = convertRGBToHSB(result.RGB as rgbColor);
@@ -93,7 +91,6 @@ const getVerbosePackage = (val: ColorValue): ColorPackage => {
     result.CMYK = convertRGBToCMYK(val as rgbColor);
     result.hex = convertRGBToHex(val as rgbColor);
   }
-  console.log(result);
   return result;
 }
 

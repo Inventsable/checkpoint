@@ -5,11 +5,19 @@ import { useSettings } from '../stores/settings';
 import Button from '../lib/components/button.vue'
 import Preview from '../lib/components/preview.vue'
 import Toolbar from '../lib/components/groups/toolbar.vue'
+import ToolbarButton from '../lib/components/toolbar-button.vue'
 import Table from '../lib/components/groups/table.vue'
 
 const settings = useSettings()
 //
-// 
+//
+const clear = async () => {
+  console.log("CLEAR")
+}
+const run = async () => {
+  console.log("CLEAR")
+}
+
 </script>
 <template>
   <div class="home-content">
@@ -18,6 +26,15 @@ const settings = useSettings()
       <Preview />
     </div>
     <Table />
+    <div class="action-bar">
+      <ToolbarButton tooltip="Execute script" @click="run" class="wide-action">
+        <div class="play-button">
+          <span class="action-bar-label" style="margin-right: 6px">Run</span>
+          <mdicon name="play" class="toolbar-icon" size="16px" />
+        </div>
+      </ToolbarButton>
+      <ToolbarButton class="slim-action" tooltip="Execute script" icon="play" @click="run" />
+    </div>
   </div>
 </template>
 
@@ -30,6 +47,49 @@ const settings = useSettings()
   --outline-stroke-color: #ffffffcc;
   --handle-fill-color: #FFEE00;
   --anchor-fill-color: #FFEE00;
+}
+
+.action-bar {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: nowrap;
+  max-width: 200px;
+  width: 100%;
+  margin: auto;
+  /* margin-top: 6px;
+  margin-bottom: 6px; */
+  height: 32px;
+  box-sizing: border-box;
+}
+
+.play-button {
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: nowrap;
+  padding: 0px 6px;
+  width: 100%;
+}
+
+.action-bar .toolbar-button-wrapper:hover {
+  filter: drop-shadow(1px 2px 3px rgba(0, 0, 0, 0.5));
+
+}
+
+.action-bar .slim-action {
+  display: none;
+}
+
+.toolbar-button-wrapper {
+  transition: border-radius 120ms var(--quint) 20ms;
+}
+
+.action-bar .wide-action {
+  width: 100%;
+  border-color: var(--color-btn-hover);
+  background-color: var(--color-btn-hover);
 }
 
 .preview {
@@ -99,6 +159,10 @@ const settings = useSettings()
 @media screen and (max-width: 149px) {
   .fake-color {
     display: none !important;
+  }
+
+  .action-bar {
+    width: 100%;
   }
 
   .toolbar {
@@ -192,6 +256,10 @@ const settings = useSettings()
 }
 
 @media screen and (max-width: 90px) {
+  .action-bar-label {
+    display: none;
+  }
+
   .table-row-wrapper {
     display: flex !important;
     justify-content: center;
@@ -209,6 +277,25 @@ const settings = useSettings()
 }
 
 @media screen and (max-width: 56px) {
+  .action-bar {
+    margin: 0px;
+    width: 100%;
+    height: 36px;
+    margin-top: -4px;
+  }
+
+  .action-bar .slim-action {
+    display: inherit;
+  }
+
+  .action-bar .wide-action {
+    display: none;
+  }
+
+  .action-bar .toolbar-button-wrapper {
+    border-color: transparent;
+    background-color: transparent;
+  }
 
   .table-wrapper {
     border-radius: 0px;
@@ -242,6 +329,8 @@ const settings = useSettings()
 
   .toolbar-button-wrapper {
     width: 100%;
+    border-radius: 0px !important;
+
   }
 
   .input-scroll-wrapper label,
