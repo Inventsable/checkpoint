@@ -22,10 +22,11 @@ export interface hsbColor {
 }
 
 export interface ColorPackage {
-  rgb: rgbColor;
-  hsb: hsbColor;
-  cmyk: cmykColor;
+  RGB: rgbColor;
+  HSB: hsbColor;
+  CMYK: cmykColor;
   hex: string;
+  model: string;
 }
 
 export type ColorValue = rgbColor | cmykColor | hsbColor;

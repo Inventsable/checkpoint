@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { computed, ref, useSlots } from 'vue'
+import { computed } from 'vue'
 import { evalES } from '../utils/utils';
 import type { ColorValue, rgbColor, cmykColor, ColorPackage, hsbColor } from '../../../shared/shared';
-import { rgbToHsb, convertCMYKToRGB } from '../utils/app';
+import { convertRGBToCMYK, convertRGBToHSB, convertRGBToHex, convertCMYKToRGB } from '../utils/app';
 
 const props = defineProps({
   modelValue: {
@@ -40,12 +40,13 @@ const props = defineProps({
   showDisabledColor: {
     type: Boolean,
     default: false,
-  }
+  },
 })
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: ColorValue): void
   (e: 'update', value: ColorValue): void
+  (e: 'updateVerbose', value: ColorPackage): void
 }>()
 
 const value = computed({
@@ -54,39 +55,45 @@ const value = computed({
   },
   set(val: ColorValue): void {
     emit("update:modelValue", val);
+    emit("updateVerbose", getVerbosePackage(val))
   }
 })
 
-const verboseValue = computed(() => {
-  return getVerbosePackage(value.value)
-})
-
 const getVerbosePackage = (val: ColorValue): ColorPackage => {
+  console.log("GET VERBOSE:")
   const result = {
-    rgb: {
+    RGB: {
       red: 50,
       green: 50,
       blue: 50
     } as rgbColor,
-    hsb: {
+    HSB: {
       hue: 1,
       saturation: 1,
       brightness: 1
     } as hsbColor,
-    cmyk: {
+    CMYK: {
       cyan: 40,
       magenta: 40,
       yellow: 40,
       black: 40
     } as cmykColor,
-    hex: "#ff0000"
+    hex: "#ff0000",
+    model: colorModel.value
   }
   if (colorModel.value == 'CMYK') {
     console.log("CMYK:", val)
-    // result.cmyk = val
+    result.CMYK = val as cmykColor;
+    result.RGB = convertCMYKToRGB(val as cmykColor);
+    result.HSB = convertRGBToHSB(result.RGB as rgbColor);
+    result.hex = convertRGBToHex(result.RGB as rgbColor);
   } else if (colorModel.value == 'RGB') {
-    console.log("RGB:", val)
+    result.RGB = val as rgbColor;
+    result.HSB = convertRGBToHSB(val as rgbColor);
+    result.CMYK = convertRGBToCMYK(val as rgbColor);
+    result.hex = convertRGBToHex(val as rgbColor);
   }
+  console.log(result);
   return result;
 }
 
@@ -122,7 +129,6 @@ async function openColorPicker() {
   if (isSame)
     return null;
   value.value = result;
-  console.log(value.value)
 }
 
 </script>
@@ -158,7 +164,6 @@ async function openColorPicker() {
         <path style="fill: black" d="M13.08,16.58v2.17H10.92V16.58ZM10.92,9v5.41h2.16V9Z" />
       </g>
     </svg>
-
   </div>
 </template>
 

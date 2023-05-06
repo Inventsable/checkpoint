@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { onMounted, ref, computed, watch, Ref } from "vue";
-import { ColorValue, rgbColor, cmykColor } from "../../../../shared/shared";
+import { ColorValue, rgbColor, cmykColor, ColorPackage } from "../../../../shared/shared";
 import {
   setCSS, convertCMYKToRGB
 } from "../../utils/app";
@@ -59,25 +59,19 @@ const anchorWidth = computed<number>({
   }),
   anchorColor = computed<ColorValue>({
     get: () => settings.anchor.style.color,
-    set: (val) => settings.anchor.style.color = val
+    set: (val: ColorValue) => settings.anchor.style.color = val
   }),
   handleColor = computed<ColorValue>({
     get: () => settings.handle.style.color,
-    set: (val) => {
-      settings.handle.style.color = val
-    }
+    set: (val) => settings.handle.style.color = val
   }),
   isHandleFilled = computed<boolean>({
     get: (): boolean => settings.handle.style.filled,
-    set: (val: boolean): void => {
-      settings.handle.style.filled = val
-    }
+    set: (val: boolean) => settings.handle.style.filled = val
   }),
   isAnchorFilled = computed<boolean>({
     get: (): boolean => settings.anchor.style.filled,
-    set: (val: boolean): void => {
-      settings.anchor.style.filled = val
-    }
+    set: (val: boolean) => settings.anchor.style.filled = val
   });
 
 // Used to sync fill states and color between all components regardless of color model
@@ -144,6 +138,10 @@ const watchStrokeColor = (cssVar: CSSVar): void => {
   setCSS(cssVar.path, `rgba(${temp.red}, ${temp.green}, ${temp.blue}, 1)`)
 }
 CSSVars.forEach((cssVar: CSSVar): void => watchStrokeColor(cssVar))
+
+function printVerboseData(data: ColorPackage) {
+  console.log(data)
+}
 </script>
 
 <template>
@@ -167,7 +165,7 @@ CSSVars.forEach((cssVar: CSSVar): void => watchStrokeColor(cssVar))
         <InputScroll :min="1" :max="100" v-model="handleSize" suffix="px" tooltip="Size of handle width/height in px" />
         <InputScroll :min="0" :max="100" v-model="handleWidth" suffix="px" tooltip="Size of handle stroke in px" />
         <ColorPicker v-model="handleColor" :title="`Handle stroke ${isHandleFilled ? 'and fill ' : ''}color`"
-          :fill="isHandleFilled" />
+          :fill="isHandleFilled" @updateVerbose="printVerboseData" />
         <Checkbox v-model="isHandleFilled" @update="val => isHandleFilled = val" title="Add fill to handle" />
       </div>
     </div>
