@@ -20,7 +20,6 @@ const config: CEP_Config = {
   parameters: ["--v=0", "--enable-nodejs", "--mixed-context"],
   width: 500,
   height: 550,
-
   panels: [
     {
       mainPath: "./main/index.html",
@@ -30,7 +29,7 @@ const config: CEP_Config = {
       width: 300,
       height: 500,
       minWidth: 40,
-      minHeight: 200,
+      minHeight: 370,
       maxWidth: 350,
       maxHeight: 800,
     },

@@ -1,3 +1,5 @@
+- Hook up scripting with Pinia!
+- Write scripting in such a way that panel can process chunks rather than entire artwork file, would be needed on largest of files
+- Create basic demo site with Lottie outlines of Pear and Mango, credit original artist
 - Needs input-scroll autoselect
 - Potential link to Swatches or themes per Antonio's feedback. If users want to use it on certain artwork with same color schemes often then it'd make sense for them to be able to link multiple themes
-- Color-Picker should have more verbose secondary data like auto conversion to HSB, CMYK, and hex

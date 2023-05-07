@@ -72,7 +72,11 @@ const anchorWidth = computed<number>({
   isAnchorFilled = computed<boolean>({
     get: (): boolean => settings.anchor.style.filled,
     set: (val: boolean) => settings.anchor.style.filled = val
-  });
+  }),
+  ignoreCMYKColorAlerts = computed<boolean>({
+    get: (): boolean => settings.options.ignoreCMYKColorAlerts,
+    set: (val: boolean) => settings.options.ignoreCMYKColorAlerts = val
+  })
 
 // Used to sync fill states and color between all components regardless of color model
 const watchAndSetCSSToggleFillColor = (watchedValue: Ref, CSSPath: string, colorValue: Ref): void => {
@@ -165,7 +169,7 @@ function printVerboseData(data: ColorPackage) {
         <InputScroll :min="1" :max="100" v-model="handleSize" suffix="px" tooltip="Size of handle width/height in px" />
         <InputScroll :min="0" :max="100" v-model="handleWidth" suffix="px" tooltip="Size of handle stroke in px" />
         <ColorPicker v-model="handleColor" :title="`Handle stroke ${isHandleFilled ? 'and fill ' : ''}color`"
-          :fill="isHandleFilled" @updateVerbose="printVerboseData" />
+          :fill="isHandleFilled" :override-alerts="ignoreCMYKColorAlerts" />
         <Checkbox v-model="isHandleFilled" title="Add fill to handle" />
       </div>
     </div>
@@ -192,7 +196,7 @@ function printVerboseData(data: ColorPackage) {
         <InputScroll :min="1" :max="100" v-model="anchorSize" suffix="px" tooltip="Size of anchor width/height in px" />
         <InputScroll :min="0" :max="100" v-model="anchorWidth" suffix="px" tooltip="Size of anchor stroke in px" />
         <ColorPicker v-model="anchorColor" :title="`Anchor stroke ${isAnchorFilled ? 'and fill ' : ''}color`"
-          :fill="isAnchorFilled" />
+          :fill="isAnchorFilled" :override-alerts="ignoreCMYKColorAlerts" />
         <Checkbox v-model="isAnchorFilled" title="Add fill to anchor" />
       </div>
     </div>
@@ -204,7 +208,8 @@ function printVerboseData(data: ColorPackage) {
         <OutlineIcon @mouseenter="typeHovers.outline = true" @mouseleave="typeHovers.outline = false" />
         <div class="placeholder" />
         <InputScroll :min="0" :max="100" v-model="outlineWidth" suffix="px" tooltip="Size of outline stroke in px" />
-        <ColorPicker v-model="outlineColor" title="Outline stroke color" :fill="false" />
+        <ColorPicker v-model="outlineColor" title="Outline stroke color" :fill="false"
+          :override-alerts="ignoreCMYKColorAlerts" />
         <div class="placeholder" />
       </div>
     </div>

@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import { onMounted, ref, computed, watch, Ref } from "vue";
 import { useSettings } from '../stores/settings';
+import { evalES } from "../lib/utils/utils";
+import { checkDiagnostic } from "../lib/utils/app"
 
-import Button from '../lib/components/button.vue'
 import Preview from '../lib/components/preview.vue'
 import Toolbar from '../lib/components/groups/toolbar.vue'
 import ToolbarButton from '../lib/components/toolbar-button.vue'
@@ -12,11 +13,15 @@ import Options from '../lib/components/groups/options.vue'
 const settings = useSettings()
 //
 //
-const clear = async () => {
-  console.log("CLEAR")
-}
 const run = async () => {
-  console.log("CLEAR")
+  console.log("RUN");
+  console.log(settings.$state);
+  const diagnostic = JSON.parse(await evalES(`runDiagnostic()`));
+  // let start = await evalES(`startOutliner('${JSON.stringify(settings.$state)}')`)
+  console.log(diagnostic);
+  console.log(settings.scriptPackage);
+  const diagnosticReport = checkDiagnostic(diagnostic, settings.scriptPackage);
+  console.log(diagnosticReport);
 }
 
 </script>
@@ -142,8 +147,8 @@ const run = async () => {
   }
 
   .table-row-wrapper>span {
-    text-overflow: ellipsis;
     overflow: hidden;
+    text-overflow: ellipsis;
     white-space: nowrap;
     width: 1.75ch;
     letter-spacing: 1ch;
@@ -162,7 +167,7 @@ const run = async () => {
 
   .input-scroll-wrapper label,
   .input-scroll-content label,
-  .checkbox-input-wrapper label {
+  .main .checkbox-input-wrapper label {
     display: none;
   }
 }
@@ -251,10 +256,11 @@ const run = async () => {
   }
 
   .table-row-wrapper>svg,
-  .checkbox-input-wrapper>label {
+  .main .checkbox-input-wrapper>label {
     display: none;
   }
 
+  .extra-options,
   .preview,
   .placeholder {
     display: none;
@@ -342,7 +348,10 @@ const run = async () => {
   .toolbar-button-wrapper {
     width: 100%;
     border-radius: 0px !important;
+  }
 
+  .input-scroll-wrapper {
+    margin-left: -1px !important;
   }
 
   .input-scroll-wrapper label,

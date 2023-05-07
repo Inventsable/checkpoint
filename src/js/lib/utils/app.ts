@@ -3,7 +3,54 @@ import {
   rgbColor,
   hsbColor,
   ColorValue,
+  ColorPackage,
+  DocumentDiagonostic,
+  Config,
 } from "../../../shared/shared";
+
+export const getVerbosePackage = (
+  val: ColorValue,
+  colorModel?: string
+): ColorPackage => {
+  if (!colorModel) {
+    if (Object.keys(val).includes("cyan")) colorModel = "CMYK";
+    else if (Object.keys(val).includes("hue")) colorModel = "HSB";
+    else if (Object.keys(val).includes("red")) colorModel = "RGB";
+    else colorModel = "UNKNOWN";
+  }
+  const result = {
+    RGB: {
+      red: 50,
+      green: 50,
+      blue: 50,
+    } as rgbColor,
+    HSB: {
+      hue: 1,
+      saturation: 1,
+      brightness: 1,
+    } as hsbColor,
+    CMYK: {
+      cyan: 40,
+      magenta: 40,
+      yellow: 40,
+      black: 40,
+    } as cmykColor,
+    hex: "#ff0000",
+    model: colorModel,
+  };
+  if (colorModel == "CMYK") {
+    result.CMYK = val as cmykColor;
+    result.RGB = convertCMYKToRGB(val as cmykColor);
+    result.HSB = convertRGBToHSB(result.RGB as rgbColor);
+    result.hex = convertRGBToHex(result.RGB as rgbColor);
+  } else if (colorModel == "RGB") {
+    result.RGB = val as rgbColor;
+    result.HSB = convertRGBToHSB(val as rgbColor);
+    result.CMYK = convertRGBToCMYK(val as rgbColor);
+    result.hex = convertRGBToHex(val as rgbColor);
+  }
+  return result;
+};
 
 export const convertCMYKToRGB = (cmyk: cmykColor): rgbColor => {
   const { cyan, magenta, yellow, black } = cmyk as cmykColor;
@@ -62,3 +109,53 @@ export function convertRGBToHSB(rgb: rgbColor): hsbColor {
     brightness: Math.ceil(v),
   } as hsbColor;
 }
+
+interface ColorError {
+  name: string;
+  msg: string;
+  value: ColorValue;
+}
+
+export type ColorErrors = ColorError[];
+
+interface DiagnosticReport {
+  colorErrors: ColorErrors;
+  chunkWarning?: {
+    anchorMax: number;
+    anchorReal: number;
+  };
+}
+
+export const checkDiagnostic = (
+  diagnostic: DocumentDiagonostic,
+  settings: Config
+) => {
+  const colorProps = ["anchor", "handle", "outline"];
+  const colors = [
+    settings.anchor.style.color as ColorPackage,
+    settings.handle.style.color as ColorPackage,
+    settings.outline.style.color as ColorPackage,
+  ]
+    .map((i, index) => {
+      let temp = Object.assign({}, i);
+      temp["name"] = colorProps[index];
+      return temp;
+    })
+    .filter((i) => i.model !== diagnostic.colorModel)
+    .map((i): ColorError => {
+      return {
+        name: i.name as string,
+        value: i[i.model],
+        msg: `${i.name} value is ${i.model} but document is ${diagnostic.colorModel}`,
+      } as ColorError;
+    });
+  const result = {
+    colorErrors: colors as ColorErrors,
+  } as DiagnosticReport;
+  if (diagnostic.paths.anchors > settings.options.chunks.maxAnchors)
+    result["chunkWarning"] = {
+      anchorMax: settings.options.chunks.maxAnchors,
+      anchorReal: diagnostic.paths.anchors,
+    };
+  return result;
+};

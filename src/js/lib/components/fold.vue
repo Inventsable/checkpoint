@@ -1,5 +1,13 @@
 <script setup lang="ts">
 import { computed, ref, watch, useSlots, onMounted } from 'vue';
+import { ns } from '../shared/shared';
+import { csi } from '../utils/bolt';
+
+const version = ref("")
+
+const getExtensionVersion = () => {
+  version.value = "0.0.1"
+}
 
 const props = defineProps<{
   open?: boolean,
@@ -14,12 +22,13 @@ const pseudoHeight = ref(0);
 onMounted(() => {
   mainElt.value = (document.querySelector('.main') as HTMLDivElement)
   labelHeight.value = (labelElt.value as HTMLDivElement).getBoundingClientRect().height
-  contentHeight.value = (elt.value as HTMLDivElement).children[0].getBoundingClientRect().height + 10;
+  contentHeight.value = (elt.value as HTMLDivElement).children[0].getBoundingClientRect().height + 6;
   getMainPanelHeight();
+  getExtensionVersion();
 })
 
 function getMainPanelHeight() {
-  mainPanelHeight.value = (mainElt.value as HTMLDivElement).getBoundingClientRect().height + labelHeight.value + 10;
+  mainPanelHeight.value = (mainElt.value as HTMLDivElement).getBoundingClientRect().height + labelHeight.value + 30;
   pseudoHeight.value = window.innerHeight - mainPanelHeight.value
 }
 
@@ -28,8 +37,8 @@ window.addEventListener('resize', () => {
 })
 
 watch(isOpen, () => {
-  if (isOpen.value) setTimeout(() => (elt.value as HTMLDivElement).style.overflow = 'auto', 440);
-  else (elt.value as HTMLDivElement).style.overflow = 'hidden';
+  if (isOpen.value) setTimeout(() => (elt.value as HTMLDivElement).style.overflowY = 'auto', 460);
+  else (elt.value as HTMLDivElement).style.overflowY = 'hidden';
 })
 </script>
 
@@ -48,9 +57,12 @@ watch(isOpen, () => {
     </div>
     <div class="fold-content" ref="elt" :style="{
         height: isOpen ? `${pseudoHeight < contentHeight ? pseudoHeight : contentHeight}px` : '0px',
-        paddingBottom: isOpen ? '8px' : '0px'
+        paddingBottom: isOpen ? '5px' : '0px'
       }">
       <slot />
+    </div>
+    <div class="footer">
+      {{ version }}
     </div>
   </div>
 </template>
@@ -58,7 +70,6 @@ watch(isOpen, () => {
 <style>
 .fold-wrapper {
   border-top: solid var(--fold-border-width) var(--fold-border);
-  border-bottom: solid var(--fold-border-width) var(--fold-border);
   width: 100%;
   cursor: default;
   padding-bottom: 0;
@@ -92,7 +103,7 @@ watch(isOpen, () => {
   fill: var(--color-icon);
   height: 18px;
   transform-origin: 50% 50%;
-  transition: all 0.15s cubic-bezier(0, 0, 0.2, 1);
+  transition: all 240ms var(--quint) 20ms;
 }
 
 .fold-icon.flip {
@@ -104,6 +115,18 @@ watch(isOpen, () => {
   padding-bottom: 8px;
   transition: height 420ms var(--quart) 20ms;
   overflow: hidden;
-  margin-right: 12px;
+  border-bottom: solid var(--fold-border-width) var(--fold-border);
+  /* margin-right: 12px; */
+}
+
+.footer {
+  max-width: 300px;
+  margin: auto;
+  padding-left: 4px;
+  margin-top: 3px;
+  margin-bottom: 0px;
+  letter-spacing: 1ch;
+  font-size: 8px;
+  opacity: 0.35;
 }
 </style>

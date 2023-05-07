@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { evalES } from '../utils/utils';
-import type { ColorValue, rgbColor, cmykColor, ColorPackage, hsbColor } from '../../../shared/shared';
-import { convertRGBToCMYK, convertRGBToHSB, convertRGBToHex, convertCMYKToRGB } from '../utils/app';
+import type { ColorValue, rgbColor, cmykColor, ColorPackage } from '../../../shared/shared';
+import { getVerbosePackage, convertCMYKToRGB } from '../utils/app';
 
 const props = defineProps({
   modelValue: {
@@ -55,44 +55,9 @@ const value = computed({
   },
   set(val: ColorValue): void {
     emit("update:modelValue", val);
-    emit("updateVerbose", getVerbosePackage(val))
+    emit("updateVerbose", getVerbosePackage(val, colorModel.value))
   }
 })
-
-const getVerbosePackage = (val: ColorValue): ColorPackage => {
-  const result = {
-    RGB: {
-      red: 50,
-      green: 50,
-      blue: 50
-    } as rgbColor,
-    HSB: {
-      hue: 1,
-      saturation: 1,
-      brightness: 1
-    } as hsbColor,
-    CMYK: {
-      cyan: 40,
-      magenta: 40,
-      yellow: 40,
-      black: 40
-    } as cmykColor,
-    hex: "#ff0000",
-    model: colorModel.value
-  }
-  if (colorModel.value == 'CMYK') {
-    result.CMYK = val as cmykColor;
-    result.RGB = convertCMYKToRGB(val as cmykColor);
-    result.HSB = convertRGBToHSB(result.RGB as rgbColor);
-    result.hex = convertRGBToHex(result.RGB as rgbColor);
-  } else if (colorModel.value == 'RGB') {
-    result.RGB = val as rgbColor;
-    result.HSB = convertRGBToHSB(val as rgbColor);
-    result.CMYK = convertRGBToCMYK(val as rgbColor);
-    result.hex = convertRGBToHex(val as rgbColor);
-  }
-  return result;
-}
 
 const colorModel = computed<string>(() => {
   if (Object.keys(value.value).includes("cyan"))
@@ -115,8 +80,9 @@ const cannotDisplay = computed<boolean>(() => {
 })
 
 const contextualTooltip = computed<string>(() => {
-  return props.disabled ? "Color picker is disabled when BG is not checked" : cannotDisplay.value
-    ? `Cannot display ${colorModel.value} but will assign correctly when run` : props.tooltip
+  if (props.disabled) return "Color picker is disabled when BG is not checked";
+  if (colorModel.value == 'CMYK')`Cannot display ${colorModel.value} but will assign correctly when run`
+  return props.tooltip
 })
 
 async function openColorPicker() {
@@ -127,7 +93,6 @@ async function openColorPicker() {
     return null;
   value.value = result;
 }
-
 </script>
 
 <template>
