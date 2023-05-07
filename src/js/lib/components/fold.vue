@@ -1,0 +1,109 @@
+<script setup lang="ts">
+import { computed, ref, watch, useSlots, onMounted } from 'vue';
+
+const props = defineProps<{
+  open?: boolean,
+  label: string
+}>()
+
+const isOpen = ref(props.open || false);
+const elt = ref<HTMLDivElement | null>(null), mainElt = ref<HTMLDivElement | null>(null), labelElt = ref<HTMLDivElement | null>(null)
+const contentHeight = ref(0), mainPanelHeight = ref(0), labelHeight = ref(0);
+const pseudoHeight = ref(0);
+
+onMounted(() => {
+  mainElt.value = (document.querySelector('.main') as HTMLDivElement)
+  labelHeight.value = (labelElt.value as HTMLDivElement).getBoundingClientRect().height
+  contentHeight.value = (elt.value as HTMLDivElement).children[0].getBoundingClientRect().height + 10;
+  getMainPanelHeight();
+})
+
+function getMainPanelHeight() {
+  mainPanelHeight.value = (mainElt.value as HTMLDivElement).getBoundingClientRect().height + labelHeight.value + 10;
+  pseudoHeight.value = window.innerHeight - mainPanelHeight.value
+}
+
+window.addEventListener('resize', () => {
+  getMainPanelHeight();
+})
+
+watch(isOpen, () => {
+  if (isOpen.value) setTimeout(() => (elt.value as HTMLDivElement).style.overflow = 'auto', 440);
+  else (elt.value as HTMLDivElement).style.overflow = 'hidden';
+})
+</script>
+
+<template>
+  <div class="fold-wrapper">
+    <div ref="labelElt" class="fold-label" @click="isOpen = !isOpen">
+      <div class="fold-label-text">
+        {{ label }}
+      </div>
+      <div class="fold-icon" :class="{ flip: !isOpen }">
+        <svg width="18" height="18" viewBox="0 0 24 24">
+          <path d="M16.59 8.59L12 13.17 7.41 8.59 6 10l6 6 6-6z" />
+          <path d="M0 0h24v24H0z" fill="none" />
+        </svg>
+      </div>
+    </div>
+    <div class="fold-content" ref="elt" :style="{
+        height: isOpen ? `${pseudoHeight < contentHeight ? pseudoHeight : contentHeight}px` : '0px',
+        paddingBottom: isOpen ? '8px' : '0px'
+      }">
+      <slot />
+    </div>
+  </div>
+</template>
+
+<style>
+.fold-wrapper {
+  border-top: solid var(--fold-border-width) var(--fold-border);
+  border-bottom: solid var(--fold-border-width) var(--fold-border);
+  width: 100%;
+  cursor: default;
+  padding-bottom: 0;
+  margin-top: 4px;
+  margin-bottom: 0 !important;
+  cursor: default;
+  user-select: none;
+}
+
+.fold-content>.fold-wrapper {
+  width: calc(100% - 10px);
+  padding-left: 10px;
+}
+
+.fold-label {
+  padding: 6px 0;
+  display: flex;
+  flex-wrap: none;
+  justify-content: space-between;
+}
+
+.fold-label-text {
+  text-transform: uppercase;
+  letter-spacing: 0.25ch;
+  user-select: none;
+}
+
+.fold-icon {
+  float: right;
+  margin-top: -2px;
+  fill: var(--color-icon);
+  height: 18px;
+  transform-origin: 50% 50%;
+  transition: all 0.15s cubic-bezier(0, 0, 0.2, 1);
+}
+
+.fold-icon.flip {
+  transform: rotate(-90deg);
+}
+
+.fold-content {
+  box-sizing: border-box;
+  padding-bottom: 8px;
+  transition: height 420ms var(--quart) 20ms;
+  overflow: hidden;
+  margin-right: 12px;
+}
+</style>

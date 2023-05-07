@@ -61,13 +61,16 @@ export const useSettings = defineStore(name, {
       },
     },
     options: {
-      userLayerLabelColor: false,
+      useLayerLabelColor: false,
       overrideComplex: false,
       forceOpacity: true,
       renameGenericPaths: true,
       generateIds: false,
       groupRelated: true,
       scaleFactor: 100,
+      ignoreBackgrounds: true,
+      warnForComplexArt: true,
+      createAsCopy: true,
       displayBG: {
         include: false,
         color: {

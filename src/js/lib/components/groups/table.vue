@@ -166,7 +166,7 @@ function printVerboseData(data: ColorPackage) {
         <InputScroll :min="0" :max="100" v-model="handleWidth" suffix="px" tooltip="Size of handle stroke in px" />
         <ColorPicker v-model="handleColor" :title="`Handle stroke ${isHandleFilled ? 'and fill ' : ''}color`"
           :fill="isHandleFilled" @updateVerbose="printVerboseData" />
-        <Checkbox v-model="isHandleFilled" @update="val => isHandleFilled = val" title="Add fill to handle" />
+        <Checkbox v-model="isHandleFilled" title="Add fill to handle" />
       </div>
     </div>
     <div class="table-row">
@@ -193,7 +193,7 @@ function printVerboseData(data: ColorPackage) {
         <InputScroll :min="0" :max="100" v-model="anchorWidth" suffix="px" tooltip="Size of anchor stroke in px" />
         <ColorPicker v-model="anchorColor" :title="`Anchor stroke ${isAnchorFilled ? 'and fill ' : ''}color`"
           :fill="isAnchorFilled" />
-        <Checkbox v-model="isAnchorFilled" @update="val => isAnchorFilled = val" title="Add fill to anchor" />
+        <Checkbox v-model="isAnchorFilled" title="Add fill to anchor" />
       </div>
     </div>
     <div class="table-row">

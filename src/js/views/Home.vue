@@ -7,6 +7,7 @@ import Preview from '../lib/components/preview.vue'
 import Toolbar from '../lib/components/groups/toolbar.vue'
 import ToolbarButton from '../lib/components/toolbar-button.vue'
 import Table from '../lib/components/groups/table.vue'
+import Options from '../lib/components/groups/options.vue'
 
 const settings = useSettings()
 //
@@ -21,19 +22,24 @@ const run = async () => {
 </script>
 <template>
   <div class="home-content">
-    <Toolbar />
-    <div class="preview">
-      <Preview />
+    <div class="main">
+      <Toolbar />
+      <div class="preview">
+        <Preview />
+      </div>
+      <Table />
+      <div class="action-bar">
+        <ToolbarButton tooltip="Execute script" @click="run" class="wide-action">
+          <div class="play-button">
+            <span class="action-bar-label" style="margin-right: 6px">Run</span>
+            <mdicon name="play" class="toolbar-icon" size="16px" />
+          </div>
+        </ToolbarButton>
+        <ToolbarButton class="slim-action" tooltip="Execute script" icon="play" @click="run" />
+      </div>
     </div>
-    <Table />
-    <div class="action-bar">
-      <ToolbarButton tooltip="Execute script" @click="run" class="wide-action">
-        <div class="play-button">
-          <span class="action-bar-label" style="margin-right: 6px">Run</span>
-          <mdicon name="play" class="toolbar-icon" size="16px" />
-        </div>
-      </ToolbarButton>
-      <ToolbarButton class="slim-action" tooltip="Execute script" icon="play" @click="run" />
+    <div class="extra-options">
+      <Options />
     </div>
   </div>
 </template>
@@ -47,6 +53,12 @@ const run = async () => {
   --outline-stroke-color: #ffffffcc;
   --handle-fill-color: #FFEE00;
   --anchor-fill-color: #FFEE00;
+}
+
+.extra-options {
+  max-width: 300px;
+  width: 100%;
+  margin: auto;
 }
 
 .action-bar {

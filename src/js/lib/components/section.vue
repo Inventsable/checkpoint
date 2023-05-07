@@ -13,8 +13,8 @@ const props = defineProps<{
   <section class="section-wrapper">
     <div class="section-pseudo"></div>
     <label class="section-label" v-if="label" :style="{
-      fontSize: size || '16px'
-    }">{{ label }}</label>
+        fontSize: size || '16px'
+      }">{{ label }}</label>
     <div class="section-content">
       <slot />
     </div>
@@ -32,7 +32,7 @@ const props = defineProps<{
   position: absolute;
   width: 100%;
   height: calc(100% - 12px);
-  top: 12px;
+  top: 8px;
   left: -4px;
   right: 3px;
   bottom: 0px;
@@ -47,6 +47,7 @@ const props = defineProps<{
 }
 
 .section-label {
+  margin-left: 5px;
   user-select: none;
   background-color: var(--color-bg);
   opacity: .8;

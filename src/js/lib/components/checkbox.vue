@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { computed } from 'vue';
+import { generateQuickGuid } from './mixins'
+
 const props = defineProps<{
   modelValue: boolean;
   label?: string;
@@ -10,23 +13,24 @@ const emit = defineEmits<{
   (e: 'update', value: boolean): void
   (e: 'blur'): void
 }>()
-const changeInput = () => {
-  emit('update', !props.modelValue)
-}
+
+const value = computed({
+  get(): boolean {
+    return props.modelValue;
+  },
+  set(val: boolean): void {
+    emit("update:modelValue", val);
+  }
+})
 const uuid = generateQuickGuid();
-function generateQuickGuid(): string {
-  return (
-    Math.random().toString(36).substring(2, 4) +
-    Math.random().toString(36).substring(2, 4)
-  );
-}
+
 </script>
 
 <template>
   <div class="checkbox-input-wrapper" :title="tooltip" :style="{
       fontSize: fontSize || '12px'
     }">
-    <input type="checkbox" tabindex="0" :value="modelValue" :checked="modelValue" @input="changeInput"
+    <input type="checkbox" tabindex="0" :value="modelValue" :checked="modelValue" @input="value = !value"
       @blur="$emit('blur')" :id="uuid" :name="uuid">
     <label :for="uuid" tabindex="0">{{ props.label }}</label>
   </div>
