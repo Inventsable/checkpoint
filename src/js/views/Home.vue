@@ -14,14 +14,17 @@ const settings = useSettings()
 //
 //
 const run = async () => {
-  console.log("RUN");
   console.log(settings.$state);
   const diagnostic = JSON.parse(await evalES(`runDiagnostic()`));
-  // let start = await evalES(`startOutliner('${JSON.stringify(settings.$state)}')`)
   console.log(diagnostic);
   console.log(settings.scriptPackage);
   const diagnosticReport = checkDiagnostic(diagnostic, settings.scriptPackage);
+  console.log("REPORT:")
   console.log(diagnosticReport);
+  if (diagnosticReport.hasErrors) {
+    // 
+  }
+  // let start = await evalES(`startOutliner('${JSON.stringify(settings.$state)}')`)
 }
 
 </script>

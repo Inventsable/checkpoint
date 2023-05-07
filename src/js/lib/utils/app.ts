@@ -119,11 +119,12 @@ interface ColorError {
 export type ColorErrors = ColorError[];
 
 interface DiagnosticReport {
-  colorErrors: ColorErrors;
+  colorErrors?: ColorErrors;
   chunkWarning?: {
     anchorMax: number;
     anchorReal: number;
   };
+  hasErrors: boolean;
 }
 
 export const checkDiagnostic = (
@@ -151,11 +152,18 @@ export const checkDiagnostic = (
     });
   const result = {
     colorErrors: colors as ColorErrors,
+    hasErrors: true,
   } as DiagnosticReport;
-  if (diagnostic.paths.anchors > settings.options.chunks.maxAnchors)
+  if (!colors.length) {
+    result.hasErrors = false;
+    delete result.colorErrors;
+  }
+  if (diagnostic.paths.anchors > settings.options.chunks.maxAnchors) {
+    result.hasErrors = true;
     result["chunkWarning"] = {
       anchorMax: settings.options.chunks.maxAnchors,
       anchorReal: diagnostic.paths.anchors,
     };
+  }
   return result;
 };
