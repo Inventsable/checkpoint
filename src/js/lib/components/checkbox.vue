@@ -7,6 +7,7 @@ const props = defineProps<{
   label?: string;
   fontSize?: string;
   tooltip?: string;
+  disabled?: boolean
 }>()
 const emit = defineEmits<{
   (e: 'update:modelValue', value: boolean): void
@@ -27,11 +28,11 @@ const uuid = generateQuickGuid();
 </script>
 
 <template>
-  <div class="checkbox-input-wrapper" :title="tooltip" :style="{
+  <div class="checkbox-input-wrapper" :class="{ disabled }" :title="tooltip" :style="{
       fontSize: fontSize || '12px'
     }">
-    <input type="checkbox" tabindex="0" :value="modelValue" :checked="modelValue" @input="value = !value"
-      @blur="$emit('blur')" :id="uuid" :name="uuid">
+    <input type="checkbox" tabindex="0" :disabled="disabled" :value="modelValue" :checked="modelValue"
+      @input="value = !value" @blur="$emit('blur')" :id="uuid" :name="uuid">
     <label :for="uuid" tabindex="0">{{ props.label }}</label>
   </div>
 </template>
@@ -121,5 +122,11 @@ input[type="checkbox"]:focus+label {
 input[type="checkbox"]:disabled {
   color: var(--checkbox-disabled);
   cursor: not-allowed;
+}
+
+.checkbox-input-wrapper.disabled,
+.checkbox-input-wrapper.disabled input[type="checkbox"] {
+  opacity: 0.5;
+  pointer-events: none;
 }
 </style>

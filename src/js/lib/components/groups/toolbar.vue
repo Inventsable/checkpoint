@@ -80,7 +80,7 @@ onMounted(() => {
 <template>
   <div class="toolbar">
     <div class="toolbar-head">
-      <InputScroll :min="1" :max="200" label="scale" v-model="displayScaleFactor" suffix="%"
+      <InputScroll :min="10" :max="250" label="scale" v-model="displayScaleFactor" suffix="%"
         tooltip="Factor to adjust preview in large artwork" />
       <ColorPicker v-model="displayBGColor" :disabled="!includeDisplayBG" />
       <Checkbox label="bg" tooltip="Simulate BG color of display to prevent app theme conflicts"

@@ -34,6 +34,14 @@ const useLayerLabelColor = computed<boolean>({
     get: (): boolean => settings.options.ignoreBackgrounds,
     set: (val: boolean) => settings.options.ignoreBackgrounds = val
   }),
+  ignoreHidden = computed<boolean>({
+    get: (): boolean => settings.options.ignoreHidden,
+    set: (val: boolean) => settings.options.ignoreHidden = val
+  }),
+  ignoreLocked = computed<boolean>({
+    get: (): boolean => settings.options.ignoreLocked,
+    set: (val: boolean) => settings.options.ignoreLocked = val
+  }),
   warnForComplexArt = computed<boolean>({
     get: (): boolean => settings.options.warnForComplexArt,
     set: (val: boolean) => settings.options.warnForComplexArt = val
@@ -47,12 +55,16 @@ const useLayerLabelColor = computed<boolean>({
     set: (val: boolean) => settings.options.mergeClippingMasks = val
   }),
   enableChunks = computed<boolean>({
-    get: (): boolean => settings.options.enableChunks,
-    set: (val: boolean) => settings.options.enableChunks = val
+    get: (): boolean => settings.options.chunks.enabled,
+    set: (val: boolean) => settings.options.chunks.enabled = val
   }),
   chunkSize = computed<number>({
-    get: (): number => settings.options.chunkSize,
-    set: (val: number) => settings.options.chunkSize = val
+    get: (): number => settings.options.chunks.size,
+    set: (val: number) => settings.options.chunks.size = val
+  }),
+  maxAnchors = computed<number>({
+    get: (): number => settings.options.chunks.maxAnchors,
+    set: (val: number) => settings.options.chunks.maxAnchors = val
   }),
   ignoreCMYKColorAlerts = computed<boolean>({
     get: (): boolean => settings.options.ignoreCMYKColorAlerts,
@@ -66,7 +78,8 @@ const useLayerLabelColor = computed<boolean>({
     <div class="placeholder-content">
       <Checkbox v-model="useLayerLabelColor" label="Use layer label colors"
         title="Override assigned colors so anchors and strokes use the label color of their parent layer" />
-      <Checkbox v-model="createAsCopy" label="Create new file as copy" title="Save file as copy before running script" />
+      <Checkbox v-model="createAsCopy" label="Create new file as copy" :disabled="true"
+        title="Save file as copy before running script" />
       <Checkbox v-model="overrideComplex" label="Override complex appearances"
         title="Strip complex appearances with multiple fills and strokes otherwise inaccessible to scripting" />
       <Checkbox v-model="mergeClippingMasks" label="Merge clipping masks"
@@ -77,8 +90,12 @@ const useLayerLabelColor = computed<boolean>({
       <Checkbox v-model="generateIds" label="Generate ids" title="Generates names with 3 character unique identifiers" />
       <Checkbox v-model="groupRelated" label="Group related"
         title="Creates child groups for each handle and stick within a parent group for anchor and handles" />
-      <Checkbox v-model="ignoreBackgrounds" label="Ignore backgrounds"
+      <Checkbox v-model="ignoreBackgrounds" label="Ignore backgrounds" :disabled="true"
         title="Ignore processing paths with exact artboard dimensions" />
+      <Checkbox v-model="ignoreLocked" :disabled="true" label="Ignore locked paths"
+        title="Ignore processing locked paths" />
+      <Checkbox v-model="ignoreHidden" :disabled="true" label="Ignore hidden paths"
+        title="Ignore processing hidden paths" />
       <Checkbox v-model="ignoreCMYKColorAlerts" label="Ignore CMYK color alerts"
         title="Don't display an alert on color pickers when using CMYK colors" />
     </div>
@@ -105,5 +122,4 @@ const useLayerLabelColor = computed<boolean>({
   box-sizing: border-box;
 }
 
-/* .extra-options {} */
-</style>
+/* .extra-options {} */</style>

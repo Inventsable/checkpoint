@@ -79,13 +79,8 @@ export const scriptConfirmation = (options: DialogOptions) => {
     });
     okButton.text = "OK";
     okButton.justify = "right";
-    if (confirmationWindow.show() === 1) {
-      return true;
-    } else {
-      return false;
-    }
+    return confirmationWindow.show() === 1;
   } catch (err) {
-    alert("If you see this message an unexpected error has occurred!");
     return false;
   }
 };
@@ -138,6 +133,14 @@ Array.prototype.every = function (callback) {
   for (var i = 0; i < this.length; i++) if (callback(this[i], i, this)) count++;
   return count == this.length;
 };
+
+// @ts-ignore
+Array.prototype.some = function (callback) {
+  for (var i = 0; i < this.length; i++)
+    if (callback(this[i], i, this)) return true;
+  return false;
+};
+
 export const get = (type: string, parent?: any, deep?: boolean): any[] => {
   // @ts-ignore
   if (arguments.length == 1 || !parent) {
@@ -238,16 +241,34 @@ export const scanCurrentPageItems = (config: Config): any[] => {
 export const filteredList = (config: Config, list: any[]): any[] => {
   // @ts-ignore
   return list.filter((i) => {
+    const isBackgroundState = pathIsEquivalentToBackground(config, i);
     return (
-      ((config.options.ignoreHidden && !i.hidden) ||
-        !config.options.ignoreHidden) &&
-      ((config.options.ignoreLocked && !i.locked) ||
-        !config.options.ignoreLocked) &&
-      ((config.options.ignoreBackgrounds &&
-        !pathIsEquivalentToBackground(config, i)) ||
-        !config.options.ignoreBackgrounds)
+      (!config.options.ignoreHidden ||
+        !checkAncestryForProp(i, "visible", true, [i.hidden])
+          // @ts-ignore
+          .some((i) => !!i)) &&
+      (!config.options.ignoreLocked ||
+        !checkAncestryForProp(i, "locked", false, [i.locked])
+          // @ts-ignore
+          .some((i) => !!i))
     );
   });
+};
+
+export const checkAncestryForProp = (
+  item: any,
+  prop: string,
+  toggled: boolean,
+  chain: any[]
+): any[] => {
+  if (item.parent && !/document/i.test(item.parent.typename)) {
+    chain = [].concat(
+      // @ts-ignore
+      chain,
+      toggled ? !item.parent[prop] : item.parent[prop]
+    );
+    return checkAncestryForProp(item.parent, prop, toggled, chain);
+  } else return chain;
 };
 
 export const pathIsEquivalentToBackground = (
@@ -271,10 +292,12 @@ export const convertListToOutlines = (config: Config, list: any[]) => {
       var parentgroup = config.options.groupRelated
         ? app.activeDocument.groupItems.add()
         : null;
-      if (config.options.groupRelated && parentgroup) {
-        parentgroup.name = item.name + config.options.suffixes.parent;
-        // @ts-ignore
-        parentgroup.move(item.layer, ElementPlacement.PLACEATBEGINNING);
+      if (config.options.groupRelated && parentgroup && !item.layer.locked) {
+        if (!parentgroup.locked) {
+          parentgroup.name = item.name + config.options.suffixes.parent;
+          // @ts-ignore
+          parentgroup.move(item.layer, ElementPlacement.PLACEATBEGINNING);
+        }
       }
       if (item.pathPoints && item.pathPoints.length)
         for (var p = 0; p < item.pathPoints.length; p++) {
@@ -310,7 +333,7 @@ export const drawAnchor = (
     config.anchor.style.size
   );
   anchor.name = name + config.anchor.label;
-  if (!config.options.groupRelated)
+  if (!config.options.groupRelated && !layer.locked)
     // @ts-ignore
     anchor.move(layer, ElementPlacement.PLACEATBEGINNING);
   setAnchorAppearance(config, anchor, false, layer);
@@ -338,7 +361,7 @@ export const drawHandle = (
       point.anchor,
       point[(direction + "Direction") as keyof PathPoint],
     ]);
-    if (!config.options.groupRelated)
+    if (!config.options.groupRelated && !layer.locked)
       // @ts-ignore
       stick.move(layer, ElementPlacement.PLACEATBEGINNING);
     stick.name =
@@ -356,7 +379,7 @@ export const drawHandle = (
       config.handle.style.size,
       config.handle.style.size
     );
-    if (!config.options.groupRelated)
+    if (!config.options.groupRelated && !layer.locked)
       // @ts-ignore
       handle.move(layer, ElementPlacement.PLACEATBEGINNING);
     handle.stroked = false;
@@ -407,6 +430,7 @@ export const replaceAppearance = (config: Config, item: any) => {
 export const sortLayerContents = () => {
   for (var i = 0; i < app.activeDocument.layers.length; i++) {
     var layer = app.activeDocument.layers[i];
+    if (layer.locked) continue;
     for (var c = 0; c < layer.pathItems.length; c++)
       layer.pathItems[c].zOrder(ZOrderMethod.BRINGTOFRONT);
     var offset = layer.pathItems.length + 1;

@@ -22,7 +22,7 @@ const pseudoHeight = ref(0);
 onMounted(() => {
   mainElt.value = (document.querySelector('.main') as HTMLDivElement)
   labelHeight.value = (labelElt.value as HTMLDivElement).getBoundingClientRect().height
-  contentHeight.value = (elt.value as HTMLDivElement).children[0].getBoundingClientRect().height + 6;
+  contentHeight.value = (elt.value as HTMLDivElement).children[0].getBoundingClientRect().height + 8;
   getMainPanelHeight();
   getExtensionVersion();
 })

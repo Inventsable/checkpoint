@@ -24,9 +24,13 @@ const run = async (): Promise<void | null> => {
       title: 'Checkpoint found some issues, run anyway?',
       body: alertString
     };
-    let shouldContinue = await evalES(`displayWarning('${JSON.stringify(displayOpts)}')`) == 'true';
-    if (!shouldContinue) return null;
-    console.log("CONTINUE")
+    if (!diagnosticReport.chunkWarning && diagnosticReport.colorErrors?.length && settings.options.ignoreCMYKColorAlerts) {
+      // Should probably let users opt out of receiving the color warning since most colors will be close enough
+    } else {
+      let shouldContinue = await evalES(`displayWarning('${JSON.stringify(displayOpts)}')`) == 'true';
+      if (!shouldContinue) return null;
+      console.log("CONTINUE")
+    }
   }
   let result = await evalES(`startOutliner('${JSON.stringify(settings.scriptPackage)}')`)
   console.log(result);
