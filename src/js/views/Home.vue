@@ -13,17 +13,23 @@ import Options from '../lib/components/groups/options.vue'
 const settings = useSettings()
 //
 //
-const run = async () => {
-  console.log(settings.$state);
+const run = async (): Promise<void | null> => {
   const diagnostic = JSON.parse(await evalES(`runDiagnostic()`));
-  console.log(diagnostic);
-  console.log(settings.scriptPackage);
   const diagnosticReport = checkDiagnostic(diagnostic, settings.scriptPackage);
-  console.log("REPORT:")
-  console.log(diagnosticReport);
   if (diagnosticReport.hasErrors) {
-    // 
+    let alertString = "";
+    if (diagnosticReport.chunkWarning && !settings.options.chunks.enabled) alertString += `• This document has ${diagnosticReport.chunkWarning.anchorReal} anchors present, exceeding the safe maximum anchor count of ${diagnosticReport.chunkWarning.anchorMax}, but chunk processing is disabled which may cause slow performance or the app to crash\\r\\n`
+    if (diagnosticReport.colorErrors?.length) alertString += diagnosticReport.colorErrors.map(i => `• ${i.msg}`).join("\\r\\n")
+    const displayOpts = {
+      title: 'Checkpoint found some issues, run anyway?',
+      body: alertString
+    };
+    let shouldContinue = await evalES(`displayWarning('${JSON.stringify(displayOpts)}')`) == 'true';
+    if (!shouldContinue) return null;
+    console.log("CONTINUE")
   }
+
+
   // let start = await evalES(`startOutliner('${JSON.stringify(settings.$state)}')`)
 }
 
