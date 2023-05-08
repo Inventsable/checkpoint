@@ -63,6 +63,8 @@ export const useSettings = defineStore(name, {
         groupRelated: true,
         scaleFactor: 100,
         ignoreBackgrounds: true,
+        ignoreHidden: true,
+        ignoreLocked: true,
         warnForComplexArt: true,
         mergeClippingMasks: true,
         createAsCopy: true,
@@ -79,7 +81,7 @@ export const useSettings = defineStore(name, {
         chunks: {
           size: 50,
           enabled: false,
-          maxAnchors: 20,
+          maxAnchors: 1000,
         },
         suffixes: {
           handle: "_handle",

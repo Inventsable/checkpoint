@@ -112,7 +112,13 @@ Array.prototype.map = function (callback) {
     mappedParam.push(callback(this[i], i, this));
   return mappedParam;
 };
-
+// @ts-ignore
+Array.prototype.filter = function (callback) {
+  var filtered = [];
+  for (var i = 0; i < this.length; i++)
+    if (callback(this[i], i, this)) filtered.push(this[i]);
+  return filtered;
+};
 // @ts-ignore
 Array.prototype.reduce = function (fn, initial) {
   var values = this;
@@ -125,6 +131,12 @@ Array.prototype.reduce = function (fn, initial) {
 // @ts-ignore
 Array.prototype.forEach = function (callback) {
   for (var i = 0; i < this.length; i++) callback(this[i], i, this);
+};
+// @ts-ignore
+Array.prototype.every = function (callback) {
+  var count = 0;
+  for (var i = 0; i < this.length; i++) if (callback(this[i], i, this)) count++;
+  return count == this.length;
 };
 export const get = (type: string, parent?: any, deep?: boolean): any[] => {
   // @ts-ignore
@@ -174,7 +186,6 @@ export const getColorFromPicker = (previous: string) => {
 };
 
 export const startOutliner = (data: string): string | boolean => {
-  // alert(JSON);
   const asChunks = false;
   const config = JSON.parse(data) as Config;
   if (asChunks) {
@@ -183,7 +194,7 @@ export const startOutliner = (data: string): string | boolean => {
   } else {
     const list = scanCurrentPageItems(config);
     convertListToOutlines(config, list);
-    // sortLayerContents();
+    sortLayerContents();
   }
   return "HELLO";
 };
@@ -208,23 +219,46 @@ export const runDiagnostic = (): string => {
   return JSON.stringify(dia);
 };
 
-function generateColor(color: ColorPackage) {
+export const generateColor = (color: ColorPackage) => {
   return color.model == "RGB" ? newRGB(color.RGB) : newCMYK(color.CMYK);
-}
+};
 
-function scanCurrentPageItems(config: Config): any[] {
+export const scanCurrentPageItems = (config: Config): any[] => {
   var list = [];
   if (!config.options.overrideComplex) {
     if (config.options.mergeClippingMasks) mergeClippingPaths();
     for (var i = app.activeDocument.pathItems.length - 1; i >= 0; i--)
       list.push(app.activeDocument.pathItems[i]);
-    return list;
+    return filteredList(config, list);
   } else {
-    return cloneAllPathItems();
+    return cloneAllPathItems(config);
   }
-}
+};
 
-function convertListToOutlines(config: Config, list: any[]) {
+export const filteredList = (config: Config, list: any[]): any[] => {
+  // @ts-ignore
+  return list.filter((i) => {
+    return (
+      ((config.options.ignoreHidden && !i.hidden) ||
+        !config.options.ignoreHidden) &&
+      ((config.options.ignoreLocked && !i.locked) ||
+        !config.options.ignoreLocked) &&
+      ((config.options.ignoreBackgrounds &&
+        !pathIsEquivalentToBackground(config, i)) ||
+        !config.options.ignoreBackgrounds)
+    );
+  });
+};
+
+export const pathIsEquivalentToBackground = (
+  config: Config,
+  path: any
+): boolean => {
+  // Not yet implemented
+  return false;
+};
+
+export const convertListToOutlines = (config: Config, list: any[]) => {
   for (var i = list.length - 1; i >= 0; i--) {
     var item = list[i];
     const parentage = item.name || item.parent.name || item.layer.name;
@@ -259,15 +293,15 @@ function convertListToOutlines(config: Config, list: any[]) {
         }
     }
   }
-}
+};
 
-function drawAnchor(
+export const drawAnchor = (
   config: Config,
   point: PathPoint,
   layer: any,
   name: string,
   group: any
-) {
+) => {
   const root = config.options.groupRelated ? group : app.activeDocument;
   var anchor = root.pathItems.rectangle(
     point.anchor[1] + config.anchor.style.size / 2,
@@ -281,16 +315,16 @@ function drawAnchor(
     anchor.move(layer, ElementPlacement.PLACEATBEGINNING);
   setAnchorAppearance(config, anchor, false, layer);
   return [anchor];
-}
+};
 
-function drawHandle(
+export const drawHandle = (
   config: Config,
   point: PathPoint,
   direction: string,
   layer: any,
   name: string,
   group: any
-) {
+) => {
   if (
     Number(point.anchor[0]) !==
       Number(point[(direction + "Direction") as keyof PathPoint][0]) ||
@@ -334,14 +368,14 @@ function drawHandle(
       : generateColor(config.handle.style.color as ColorPackage);
     return [stick, handle];
   }
-}
+};
 
-function setAnchorAppearance(
+export const setAnchorAppearance = (
   config: Config,
   item: any,
   isHandle: boolean,
   layer: any
-): void {
+): void => {
   var realColor = config.options.useLayerLabelColor
     ? layer.color
     : generateColor(config.anchor.style.color as ColorPackage);
@@ -360,17 +394,17 @@ function setAnchorAppearance(
     item.strokeWidth = config.anchor.style.width;
     item.strokeColor = realColor;
   }
-}
+};
 
-function replaceAppearance(config: Config, item: any) {
+export const replaceAppearance = (config: Config, item: any) => {
   item.filled = false;
   item.stroked = true;
   item.strokeWidth = config.outline.style.width;
   item.strokeColor = generateColor(config.outline.style.color as ColorPackage);
-}
+};
 
 // Rearrange results per layer so anchor Groups are directly above their target path
-function sortLayerContents() {
+export const sortLayerContents = () => {
   for (var i = 0; i < app.activeDocument.layers.length; i++) {
     var layer = app.activeDocument.layers[i];
     for (var c = 0; c < layer.pathItems.length; c++)
@@ -382,10 +416,15 @@ function sortLayerContents() {
       for (var z = 0; z < offset; z++) group.zOrder(ZOrderMethod.BRINGFORWARD);
     }
   }
-}
+};
 
 // Generates a unique identifier for layer to use in children nodes
-function rollName(config: Config, name: string, item: any, layer: any): string {
+export const rollName = (
+  config: Config,
+  name: string,
+  item: any,
+  layer: any
+): string => {
   var siblingCount = 0;
   var nameRX = new RegExp(name + "\\[\\d\\].*");
   if (!config.options.generateIds)
@@ -399,10 +438,10 @@ function rollName(config: Config, name: string, item: any, layer: any): string {
   return config.options.generateIds
     ? name + "_" + shortId() + "_"
     : name + "[" + siblingCount + "]";
-}
+};
 
 // Reconstruct all PathItems with basic data to override any complex appearances
-function cloneAllPathItems() {
+export const cloneAllPathItems = (config: Config) => {
   var list = [];
   var cloneProps = ["position", "left", "top", "name", "closed"];
   var pathProps = ["anchor", "leftDirection", "rightDirection", "pointType"];
@@ -422,6 +461,7 @@ function cloneAllPathItems() {
     list.push(clone);
     item.remove();
   }
+  list = filteredList(config, list);
   var dupes = [];
   for (var i = 0; i < list.length; i++) {
     var schema = list[i];
@@ -443,9 +483,9 @@ function cloneAllPathItems() {
     dupes.push(item);
   }
   return dupes;
-}
+};
 
-function mergeClippingPaths() {
+export const mergeClippingPaths = () => {
   app.selection = null;
   app.executeMenuCommand("Clipping Masks menu item");
   var masks = app.selection;
@@ -489,11 +529,11 @@ function mergeClippingPaths() {
     app.executeMenuCommand("ungroup");
     app.selection = null;
   }
-}
+};
 
 // Thanks Qwertyfly
 // https://community.adobe.com/t5/illustrator/js-cs6-executemenucommand/m-p/5904772#M19673
-function intersectAction(): void {
+export const intersectAction = (): void => {
   if (app.documents.length == 0) {
     return;
   }
@@ -503,27 +543,27 @@ function intersectAction(): void {
   var ActionString = "";
   app.doScript("Intersect", "ExportTest", false);
   app.unloadAction("ExportTest", "");
-}
-function createAction(str: string): void {
+};
+export const createAction = (str: string): void => {
   var f = new File("~/ScriptAction.aia");
   f.open("w");
   f.write(str);
   f.close();
   app.loadAction(f);
   f.remove();
-}
+};
 
-function randomInt(min: number, max: number): number {
+export const randomInt = (min: number, max: number): number => {
   return Math.floor(Math.random() * (max - min + 1) + min);
-}
+};
 
-function shortId(): string {
+export const shortId = (): string => {
   var str = "";
   var codex = "0123456789abcdefghijklmnopqrstuvwxyz";
   for (var i = 0; i <= 2; i++)
     str += codex.charAt(randomInt(0, codex.length - 1));
   return str.toUpperCase();
-}
+};
 
 // Shorthand for testing against silent script failure
 export const helloWorld = () => {

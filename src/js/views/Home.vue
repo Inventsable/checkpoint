@@ -28,8 +28,8 @@ const run = async (): Promise<void | null> => {
     if (!shouldContinue) return null;
     console.log("CONTINUE")
   }
-
-
+  let result = await evalES(`startOutliner('${JSON.stringify(settings.scriptPackage)}')`)
+  console.log(result);
   // let start = await evalES(`startOutliner('${JSON.stringify(settings.$state)}')`)
 }
 

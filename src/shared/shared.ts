@@ -80,6 +80,8 @@ export interface Config {
     groupRelated: boolean;
     scaleFactor: number;
     ignoreBackgrounds: boolean;
+    ignoreHidden: boolean;
+    ignoreLocked: boolean;
     warnForComplexArt: boolean;
     mergeClippingMasks: boolean;
     createAsCopy: boolean;
