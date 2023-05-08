@@ -13,8 +13,12 @@ import {
 
 const settings = useSettings()
 
-const includeDisplayBG = ref(settings.options.displayBG.include);
-const displayBGColor = computed<ColorValue>({
+// const includeDisplayBG = ref(settings.options.displayBG.include);
+
+const includeDisplayBG = computed<boolean>({
+  get: () => settings.options.displayBG.include,
+  set: (val) => settings.options.displayBG.include = val
+}), displayBGColor = computed<ColorValue>({
   get: () => settings.options.displayBG.color,
   set: (val) => settings.options.displayBG.color = val
 }), displayScaleFactor = computed<number>({
@@ -84,7 +88,7 @@ onMounted(() => {
         tooltip="Factor to adjust preview in large artwork" />
       <ColorPicker v-model="displayBGColor" :disabled="!includeDisplayBG" />
       <Checkbox label="bg" tooltip="Simulate BG color of display to prevent app theme conflicts"
-        v-model="includeDisplayBG" @update="val => includeDisplayBG = val" />
+        v-model="includeDisplayBG" />
 
     </div>
     <div class="toolbar-tail">

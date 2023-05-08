@@ -467,10 +467,19 @@ export const rollName = (
 // Reconstruct all PathItems with basic data to override any complex appearances
 export const cloneAllPathItems = (config: Config) => {
   var list = [];
-  var cloneProps = ["position", "left", "top", "name", "closed"];
+  var cloneProps = ["position", "left", "top", "name", "closed", "layer"];
   var pathProps = ["anchor", "leftDirection", "rightDirection", "pointType"];
   for (var i = app.activeDocument.pathItems.length - 1; i >= 0; i--) {
     var item = app.activeDocument.pathItems[i];
+    const isHidden = checkAncestryForProp(item, "visible", true, [
+      item.hidden,
+      // @ts-ignore
+    ]).some((i) => !!i);
+    const isLocked = checkAncestryForProp(item, "locked", false, [
+      item.locked,
+      // @ts-ignore
+    ]).some((i) => !!i);
+    if (isHidden || isLocked) continue;
     var clone = {
       pathPoints: [],
     };
@@ -479,6 +488,7 @@ export const cloneAllPathItems = (config: Config) => {
       // @ts-ignore
       clone[prop] = item[prop];
     }
+
     for (var v = 0; v < item.pathPoints.length; v++)
       // @ts-ignore
       clone.pathPoints.push(item.pathPoints[v]);
@@ -493,8 +503,10 @@ export const cloneAllPathItems = (config: Config) => {
     for (var v = 0; v < cloneProps.length; v++) {
       var prop = cloneProps[v];
       // @ts-ignore
-      item[prop] = schema[prop];
+      if (prop !== "layer") item[prop] = schema[prop];
     }
+    // @ts-ignore
+    item.move(schema.layer, ElementPlacement.PLACEATBEGINNING);
     for (var v = 0; v < schema.pathPoints.length; v++) {
       var point = schema.pathPoints[v];
       var newpoint = item.pathPoints.add();

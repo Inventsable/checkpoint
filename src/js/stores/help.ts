@@ -1,6 +1,14 @@
 import { watch } from "vue";
 import { defineStore } from "pinia";
 const storage = window.localStorage;
+import path from "path";
+import {
+  readFile,
+  writeFile,
+  makeFolder,
+  exists,
+  deleteFile,
+} from "../lib/utils/fs";
 const name = "help";
 
 interface Page {
@@ -107,7 +115,8 @@ export const useHelp = defineStore(name, {
       );
       try {
         let data = await this.loadHelpPages();
-        this.assignHelpData(JSON.parse(data) as HelpDocs);
+        console.log(data);
+        this.assignHelpData(data as HelpDocs);
       } catch (err) {
         if (temp) this.$state = JSON.parse(temp);
         console.error("Something went wrong in help assignment");
@@ -125,22 +134,27 @@ export const useHelp = defineStore(name, {
         return null;
       }
       this.pages = data.pages;
-      // console.log(this.pages);
-      // console.log(this.pages.map((i) => i.uuid));
       // @ts-ignore
       this.timestamp = data.timestamp;
       this.date = data.date;
     },
     async loadHelpPages() {
-      try {
-        let data = await fetch(this.URL).catch((err) => {
-          console.error(err);
-        });
-        // @ts-ignore
-        return data.text();
-      } catch (err) {
-        console.error(err);
-        return null;
+      const rootFolder = path
+        .join(window.__adobe_cep__.getSystemPath("userData"), "Checkpoint")
+        .replace(/^file\:\\/, "")
+        .replace(/\\/gm, "/");
+      let targFile = path
+        .join(
+          window.__adobe_cep__.getSystemPath("userData"),
+          "Checkpoint",
+          "help.json"
+        )
+        .replace(/^file\:\\/, "")
+        .replace(/\\/gm, "/");
+      if (exists(rootFolder) && exists(targFile)) {
+        return await readFile(targFile, false);
+      } else {
+        console.log("HELP PAGES COULD NOT BE LOADED...");
       }
     },
   },

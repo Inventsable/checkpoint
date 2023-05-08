@@ -30,6 +30,9 @@ onMounted(async () => {
     router.push({
       path: `/settings/main`
     })
+  else {
+    settings.preloadHelpPages();
+  }
 });
 
 </script>

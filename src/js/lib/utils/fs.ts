@@ -25,6 +25,15 @@ export const writeFile = (
   });
 };
 
+export const deleteFile = (filePath: string): Promise<Error | boolean> => {
+  return new Promise((resolve, reject) => {
+    fs.unlink(filePath, (err: ErrnoException | null): void => {
+      if (err) reject(err);
+      else resolve(true);
+    });
+  });
+};
+
 export const makeFolder = (targetPath: string): Promise<boolean> => {
   return new Promise((resolve, reject) => {
     fs.mkdir(path.resolve(targetPath), (err) => {
