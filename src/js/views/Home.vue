@@ -51,6 +51,15 @@ const menuOpts = [
     enabled: true,
     checked: false,
   },
+  {
+    label: "More cool stuff",
+    id: "seeMore",
+    callback: () => {
+      console.log("OPEN LINK TO SITE")
+    },
+    enabled: true,
+    checked: false,
+  },
 ]
 
 interface MenuItem {
@@ -69,9 +78,10 @@ csi.addEventListener("com.adobe.csxs.events.flyoutMenuClicked", (p: any) => {
 
 const flyoutXML = `
 <Menu>
-  <MenuItem Id="refresh" Label="Refresh panel" Enabled="false" Checked="false"/>
-  <MenuItem Id="resetStore" Label="Reset data" Enabled="true" Checked="false"/>
+  <MenuItem Id="refresh" Label="Refresh panel" Enabled="true" Checked="false"/>
   <MenuItem Label="---" />
+  <MenuItem Id="seeMore" Label="More cool stuff" Enabled="true" Checked="false"/>
+  <MenuItem Id="resetStore" Label="Reset data" Enabled="true" Checked="false"/>
 </Menu>
 `
 csi.setPanelFlyoutMenu(flyoutXML)
