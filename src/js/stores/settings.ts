@@ -86,6 +86,7 @@ export const useSettings = defineStore(name, {
           anchor: "_anchor",
           stick: "_stick",
           outline: "_outline",
+          parent: "_nodes",
         },
       },
     } as Config),

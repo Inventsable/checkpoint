@@ -1,13 +1,26 @@
 import type {
+  ColorPackage,
   ColorValue,
   Config,
   DocumentDiagonostic,
+  cmykColor,
+  rgbColor,
 } from "../../shared/shared";
 
 interface DialogOptions {
   title: string;
   header: string;
   body: string;
+}
+interface PathPoint {
+  anchor: number[];
+  leftDirection: number[];
+  parent: any;
+  pointType: any;
+  selected: boolean;
+  rightDirection: number[];
+  typename: string;
+  remove: () => void;
 }
 
 export const displayWarning = (options: string) => {
@@ -18,7 +31,7 @@ export const displayWarning = (options: string) => {
 
 // Thanks Stephen
 // https://github.com/MarshySwamp/ScriptUI-Confirm-Window
-function scriptConfirmation(options: DialogOptions) {
+export const scriptConfirmation = (options: DialogOptions) => {
   var confirmationTitle = options.title,
     confirmationString2 = options.body;
   try {
@@ -75,21 +88,22 @@ function scriptConfirmation(options: DialogOptions) {
     alert("If you see this message an unexpected error has occurred!");
     return false;
   }
-}
-// @ts-ignore
-RGBColor.prototype.set = function (color: rgbColor): rgbColor {
-  this.red = color.red;
-  this.green = color.green;
-  this.blue = color.blue;
-  return this;
 };
-// @ts-ignore
-CMYKColor.prototype.set = function (color: cmykColor): cmykColor {
-  this.cyan = color.cyan;
-  this.magenta = color.magenta;
-  this.yellow = color.yellow;
-  this.black = color.black;
-  return this;
+
+export const newRGB = (color: rgbColor): rgbColor => {
+  const temp = new RGBColor() as rgbColor;
+  temp.red = color.red;
+  temp.green = color.green;
+  temp.blue = color.blue;
+  return temp;
+};
+export const newCMYK = (color: cmykColor): cmykColor => {
+  const temp = new CMYKColor() as cmykColor;
+  temp.cyan = color.cyan;
+  temp.magenta = color.magenta;
+  temp.yellow = color.yellow;
+  temp.black = color.black;
+  return temp;
 };
 // @ts-ignore
 Array.prototype.map = function (callback) {
@@ -98,6 +112,7 @@ Array.prototype.map = function (callback) {
     mappedParam.push(callback(this[i], i, this));
   return mappedParam;
 };
+
 // @ts-ignore
 Array.prototype.reduce = function (fn, initial) {
   var values = this;
@@ -111,7 +126,8 @@ Array.prototype.reduce = function (fn, initial) {
 Array.prototype.forEach = function (callback) {
   for (var i = 0; i < this.length; i++) callback(this[i], i, this);
 };
-function get(type: string, parent?: any, deep?: boolean): any[] {
+export const get = (type: string, parent?: any, deep?: boolean): any[] => {
+  // @ts-ignore
   if (arguments.length == 1 || !parent) {
     parent = app.activeDocument;
     deep = true;
@@ -125,10 +141,6 @@ function get(type: string, parent?: any, deep?: boolean): any[] {
       result = [].concat(result, get(type, parent[type][i], deep));
   }
   return result;
-}
-
-export const helloWorld = () => {
-  alert("Hello world");
 };
 
 export const getColorFromPicker = (previous: string) => {
@@ -161,13 +173,17 @@ export const getColorFromPicker = (previous: string) => {
   } else return null;
 };
 
-export const startOutliner = (data: string, asChunks?: boolean): string => {
+export const startOutliner = (data: string): string | boolean => {
   // alert(JSON);
+  const asChunks = false;
   const config = JSON.parse(data) as Config;
   if (asChunks) {
-    //
+    alert("Not currently supported");
+    return false;
   } else {
-    //
+    const list = scanCurrentPageItems(config);
+    convertListToOutlines(config, list);
+    // sortLayerContents();
   }
   return "HELLO";
 };
@@ -191,6 +207,199 @@ export const runDiagnostic = (): string => {
   } as DocumentDiagonostic;
   return JSON.stringify(dia);
 };
+
+function generateColor(color: ColorPackage) {
+  return color.model == "RGB" ? newRGB(color.RGB) : newCMYK(color.CMYK);
+}
+
+function scanCurrentPageItems(config: Config): any[] {
+  var list = [];
+  if (!config.options.overrideComplex) {
+    if (config.options.mergeClippingMasks) mergeClippingPaths();
+    for (var i = app.activeDocument.pathItems.length - 1; i >= 0; i--)
+      list.push(app.activeDocument.pathItems[i]);
+    return list;
+  } else {
+    return cloneAllPathItems();
+  }
+}
+
+function convertListToOutlines(config: Config, list: any[]) {
+  for (var i = list.length - 1; i >= 0; i--) {
+    var item = list[i];
+    const parentage = item.name || item.parent.name || item.layer.name;
+    item.name = config.options.renameGenericPaths
+      ? // @ts-ignore
+        rollName(config, parentage, item, item.layer)
+      : parentage;
+    if (item.stroked || item.filled) {
+      replaceAppearance(config, item);
+      var parentgroup = config.options.groupRelated
+        ? app.activeDocument.groupItems.add()
+        : null;
+      if (config.options.groupRelated && parentgroup) {
+        parentgroup.name = item.name + config.options.suffixes.parent;
+        // @ts-ignore
+        parentgroup.move(item.layer, ElementPlacement.PLACEATBEGINNING);
+      }
+      if (item.pathPoints && item.pathPoints.length)
+        for (var p = 0; p < item.pathPoints.length; p++) {
+          var point = item.pathPoints[p];
+          var pointName = item.name + "[" + p + "]";
+          var group = config.options.groupRelated
+            ? // @ts-ignore
+              parentgroup.groupItems.add()
+            : null;
+          // @ts-ignore
+          if (config.options.groupRelated) group.name = pointName;
+          drawAnchor(config, point, item.layer, pointName, group);
+          drawHandle(config, point, "left", item.layer, pointName, group);
+          drawHandle(config, point, "right", item.layer, pointName, group);
+          item.opacity = config.options.forceOpacity ? 100.0 : item.opacity;
+        }
+    }
+  }
+}
+
+function drawAnchor(
+  config: Config,
+  point: PathPoint,
+  layer: any,
+  name: string,
+  group: any
+) {
+  const root = config.options.groupRelated ? group : app.activeDocument;
+  var anchor = root.pathItems.rectangle(
+    point.anchor[1] + config.anchor.style.size / 2,
+    point.anchor[0] - config.anchor.style.size / 2,
+    config.anchor.style.size,
+    config.anchor.style.size
+  );
+  anchor.name = name + config.anchor.label;
+  if (!config.options.groupRelated)
+    // @ts-ignore
+    anchor.move(layer, ElementPlacement.PLACEATBEGINNING);
+  setAnchorAppearance(config, anchor, false, layer);
+  return [anchor];
+}
+
+function drawHandle(
+  config: Config,
+  point: PathPoint,
+  direction: string,
+  layer: any,
+  name: string,
+  group: any
+) {
+  if (
+    Number(point.anchor[0]) !==
+      Number(point[(direction + "Direction") as keyof PathPoint][0]) ||
+    Number(point.anchor[1]) !==
+      Number(point[(direction + "Direction") as keyof PathPoint][1])
+  ) {
+    var stick = config.options.groupRelated
+      ? group.pathItems.add()
+      : app.activeDocument.pathItems.add();
+    stick.setEntirePath([
+      point.anchor,
+      point[(direction + "Direction") as keyof PathPoint],
+    ]);
+    if (!config.options.groupRelated)
+      // @ts-ignore
+      stick.move(layer, ElementPlacement.PLACEATBEGINNING);
+    stick.name =
+      name + "_" + direction.charAt(0).toUpperCase() + config.stick.label;
+
+    setAnchorAppearance(config, stick, true, layer);
+
+    const root = config.options.groupRelated ? group : app.activeDocument;
+
+    var handle = root.pathItems.ellipse(
+      point[(direction + "Direction") as keyof PathPoint][1] +
+        config.handle.style.size / 2,
+      point[(direction + "Direction") as keyof PathPoint][0] -
+        config.handle.style.size / 2,
+      config.handle.style.size,
+      config.handle.style.size
+    );
+    if (!config.options.groupRelated)
+      // @ts-ignore
+      handle.move(layer, ElementPlacement.PLACEATBEGINNING);
+    handle.stroked = false;
+    handle.filled = true;
+    handle.name =
+      name + "_" + direction.charAt(0).toUpperCase() + config.handle.label;
+    handle.fillColor = config.options.useLayerLabelColor
+      ? layer.color
+      : generateColor(config.handle.style.color as ColorPackage);
+    return [stick, handle];
+  }
+}
+
+function setAnchorAppearance(
+  config: Config,
+  item: any,
+  isHandle: boolean,
+  layer: any
+): void {
+  var realColor = config.options.useLayerLabelColor
+    ? layer.color
+    : generateColor(config.anchor.style.color as ColorPackage);
+  if (!isHandle) {
+    item.filled = config.anchor.style.filled;
+    item.stroked = !config.anchor.style.filled;
+    if (!config.anchor.style.filled) {
+      item.strokeWidth = config.anchor.style.width;
+      item.strokeColor = realColor;
+    } else {
+      item.fillColor = realColor;
+    }
+  } else {
+    item.filled = false;
+    item.stroked = true;
+    item.strokeWidth = config.anchor.style.width;
+    item.strokeColor = realColor;
+  }
+}
+
+function replaceAppearance(config: Config, item: any) {
+  item.filled = false;
+  item.stroked = true;
+  item.strokeWidth = config.outline.style.width;
+  item.strokeColor = generateColor(config.outline.style.color as ColorPackage);
+}
+
+// Rearrange results per layer so anchor Groups are directly above their target path
+function sortLayerContents() {
+  for (var i = 0; i < app.activeDocument.layers.length; i++) {
+    var layer = app.activeDocument.layers[i];
+    for (var c = 0; c < layer.pathItems.length; c++)
+      layer.pathItems[c].zOrder(ZOrderMethod.BRINGTOFRONT);
+    var offset = layer.pathItems.length + 1;
+    for (var c = 0; c < layer.groupItems.length; c++) {
+      var group = layer.groupItems[c];
+      offset = Number(offset) - Number(1);
+      for (var z = 0; z < offset; z++) group.zOrder(ZOrderMethod.BRINGFORWARD);
+    }
+  }
+}
+
+// Generates a unique identifier for layer to use in children nodes
+function rollName(config: Config, name: string, item: any, layer: any): string {
+  var siblingCount = 0;
+  var nameRX = new RegExp(name + "\\[\\d\\].*");
+  if (!config.options.generateIds)
+    for (var i = 0; i < layer.pathItems.length; i++)
+      if (
+        nameRX.test(layer.pathItems[i].name) &&
+        layer.pathItems[i] !== item &&
+        !/group/i.test(layer.pathItems[i].typename)
+      )
+        siblingCount++;
+  return config.options.generateIds
+    ? name + "_" + shortId() + "_"
+    : name + "[" + siblingCount + "]";
+}
 
 // Reconstruct all PathItems with basic data to override any complex appearances
 function cloneAllPathItems() {
@@ -294,14 +503,14 @@ function intersectAction(): void {
   var ActionString = "";
   app.doScript("Intersect", "ExportTest", false);
   app.unloadAction("ExportTest", "");
-  function createAction(str: string): void {
-    var f = new File("~/ScriptAction.aia");
-    f.open("w");
-    f.write(str);
-    f.close();
-    app.loadAction(f);
-    f.remove();
-  }
+}
+function createAction(str: string): void {
+  var f = new File("~/ScriptAction.aia");
+  f.open("w");
+  f.write(str);
+  f.close();
+  app.loadAction(f);
+  f.remove();
 }
 
 function randomInt(min: number, max: number): number {
@@ -315,3 +524,8 @@ function shortId(): string {
     str += codex.charAt(randomInt(0, codex.length - 1));
   return str.toUpperCase();
 }
+
+// Shorthand for testing against silent script failure
+export const helloWorld = () => {
+  alert("Hello world");
+};

@@ -94,5 +94,12 @@ export interface Config {
       enabled: boolean;
       maxAnchors: number;
     };
+    suffixes: {
+      handle: string;
+      anchor: string;
+      stick: string;
+      outline: string;
+      parent: string;
+    };
   };
 }

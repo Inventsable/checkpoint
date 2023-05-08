@@ -55,8 +55,6 @@ CMYKColor.prototype.set = function (color: cmykColor): cmykColor {
   return this;
 };
 
-const doc = app.activeDocument;
-
 // convertAllToOutlines();
 // var doc = app.activeDocument;
 
