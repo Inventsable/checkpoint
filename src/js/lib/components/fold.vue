@@ -2,13 +2,9 @@
 import { computed, ref, watch, useSlots, onMounted } from 'vue';
 import { ns } from '../shared/shared';
 import { csi } from '../utils/bolt';
+import { getVersion } from '../utils/getVersion';
 
 const version = ref("")
-
-const getExtensionVersion = () => {
-  version.value = "0.0.1"
-}
-
 const props = defineProps<{
   open?: boolean,
   label: string
@@ -19,12 +15,12 @@ const elt = ref<HTMLDivElement | null>(null), mainElt = ref<HTMLDivElement | nul
 const contentHeight = ref(0), mainPanelHeight = ref(0), labelHeight = ref(0);
 const pseudoHeight = ref(0);
 
-onMounted(() => {
+onMounted(async () => {
   mainElt.value = (document.querySelector('.main') as HTMLDivElement)
   labelHeight.value = (labelElt.value as HTMLDivElement).getBoundingClientRect().height
   contentHeight.value = (elt.value as HTMLDivElement).children[0].getBoundingClientRect().height + 8;
   getMainPanelHeight();
-  getExtensionVersion();
+  version.value = await getVersion();
 })
 
 function getMainPanelHeight() {

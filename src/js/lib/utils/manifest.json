@@ -1,0 +1,44 @@
+{
+  "version": "6.0",
+  "extensionBundleId": "com.hardhat.cep",
+  "extensionBundleVersion": "0.0.1",
+  "extensionBundleName": "Checkpoint",
+  "hostlist": [
+    {
+      "name": "ILST",
+      "version": "[0.0,99.9]"
+    }
+  ],
+  "requiredRuntimeList": {
+    "name": "CSXS",
+    "version": "9.0"
+  },
+  "extensions": [
+    {
+      "id": "com.hardhat.cep.main",
+      "version": "0.0.1",
+      "mainPath": "./main.index.html",
+      "lifecycle": {
+        "autovisible": true
+      },
+      "ui": {
+        "type": "Panel",
+        "menu": "Checkpoint",
+        "geometry": {
+          "size": {
+            "width": 300,
+            "height": 500
+          },
+          "maxSize": {
+            "width": 350,
+            "height": 700
+          },
+          "minSize": {
+            "width": 40,
+            "height": 370
+          }
+        }
+      }
+    }
+  ]
+}
