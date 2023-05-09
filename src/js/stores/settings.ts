@@ -15,14 +15,23 @@ const storage = window.localStorage;
 const override = false;
 import { useHelp } from "./help";
 
-let isLightTheme = false;
-deduceTheme();
-
-function deduceTheme() {
+const deduceTheme = () => {
   isLightTheme =
     JSON.parse(window.__adobe_cep__.getHostEnvironment()).appSkinInfo
       .panelBackgroundColor.color.red > 200;
-}
+};
+const getFilePath = (filepath: string): string => {
+  return filepath.replace(/^file\:\\/, "").replace(/\\/gm, "/");
+};
+const APPDATA_FOLDER = getFilePath(
+  path.join(window.__adobe_cep__.getSystemPath("userData"), "Checkpoint")
+);
+const SETTINGS_FILE = getFilePath(path.join(APPDATA_FOLDER, "settings.json"));
+const HELP_FILE = getFilePath(path.join(APPDATA_FOLDER, "help.json"));
+const CHANGELOG_FILE = getFilePath(path.join(APPDATA_FOLDER, "changelog.json"));
+
+let isLightTheme = false;
+deduceTheme();
 
 export const useSettings = defineStore(name, {
   state: () =>
@@ -134,6 +143,7 @@ export const useSettings = defineStore(name, {
     } as Config),
   getters: {
     scriptPackage(state) {
+      // @ts-ignore
       const p = JSON.parse(JSON.stringify(this.$state));
       p.anchor.style.color = getVerbosePackage(p.anchor.style.color);
       p.handle.style.color = getVerbosePackage(p.handle.style.color);
@@ -164,50 +174,24 @@ export const useSettings = defineStore(name, {
       this.$reset();
     },
     async deleteSettings() {
-      const folder = path
-        .join(window.__adobe_cep__.getSystemPath("userData"), "Checkpoint")
-        .replace(/^file\:\\/, "")
-        .replace(/\\/gm, "/");
-      const settingsFile = path
-        .join(folder, "settings.json")
-        .replace(/\\/gm, "/");
-      if (exists(settingsFile)) return await deleteFile(settingsFile);
+      if (exists(SETTINGS_FILE)) return await deleteFile(SETTINGS_FILE);
       else return false;
     },
     async saveSettings() {
-      const folder = path
-        .join(window.__adobe_cep__.getSystemPath("userData"), "Checkpoint")
-        .replace(/^file\:\\/, "")
-        .replace(/\\/gm, "/");
       return await writeFile(
-        path.join(folder, "settings.json").replace(/\\/gm, "/"),
+        SETTINGS_FILE,
         JSON.stringify(this.$state, null, 4)
       );
     },
     async loadSettingsFromAppData() {
-      let targFile = path
-        .join(
-          window.__adobe_cep__.getSystemPath("userData"),
-          "Checkpoint",
-          "settings.json"
-        )
-        .replace(/^file\:\\/, "")
-        .replace(/\\/gm, "/");
-      if (exists(targFile)) {
-        let lastSettings = await readFile(targFile, false);
+      if (exists(SETTINGS_FILE)) {
+        let lastSettings = await readFile(SETTINGS_FILE, false);
         this.$state = lastSettings;
       }
     },
     async verifyTempFolder() {
-      let folder = path
-        .join(window.__adobe_cep__.getSystemPath("userData"), "Checkpoint")
-        .replace(/^file\:\\/, "")
-        .replace(/\\/gm, "/");
-      let settingsFile = path
-        .join(folder, "settings.json")
-        .replace(/\\/gm, "/");
-      if (!exists(folder)) await makeFolder(folder);
-      if (!exists(settingsFile)) await this.saveSettings();
+      if (!exists(APPDATA_FOLDER)) await makeFolder(APPDATA_FOLDER);
+      if (!exists(SETTINGS_FILE)) await this.saveSettings();
     },
     async getHelpPages() {
       const help = useHelp();
@@ -218,31 +202,39 @@ export const useSettings = defineStore(name, {
       return data.text();
     },
     async preloadHelpPages() {
-      const rootFolder = path
-        .join(window.__adobe_cep__.getSystemPath("userData"), "Checkpoint")
-        .replace(/^file\:\\/, "")
-        .replace(/\\/gm, "/");
-      let targFile = path
-        .join(
-          window.__adobe_cep__.getSystemPath("userData"),
-          "Checkpoint",
-          "help.json"
-        )
-        .replace(/^file\:\\/, "")
-        .replace(/\\/gm, "/");
-
       const pages = await this.getHelpPages();
-      console.log(pages);
       try {
         let temp = JSON.parse(pages);
-        console.log(temp);
       } catch (err) {
         console.log(pages);
         console.log(err);
       }
-      if (exists(rootFolder) && pages) {
+      if (exists(APPDATA_FOLDER) && pages) {
         return await writeFile(
-          targFile,
+          HELP_FILE,
+          // @ts-ignore
+          JSON.stringify(JSON.parse(pages), null, 4)
+        );
+      }
+    },
+    async getChangelogPages() {
+      const data = await fetch("XXX").catch((err) => {
+        console.error(err);
+      });
+      // @ts-ignore
+      return data.text();
+    },
+    async preloadChangelogPages() {
+      const pages = await this.getChangelogPages();
+      try {
+        let temp = JSON.parse(pages);
+      } catch (err) {
+        console.log(pages);
+        console.log(err);
+      }
+      if (exists(APPDATA_FOLDER) && pages) {
+        return await writeFile(
+          CHANGELOG_FILE,
           // @ts-ignore
           JSON.stringify(JSON.parse(pages), null, 4)
         );

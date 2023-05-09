@@ -146,6 +146,7 @@ export const checkDiagnostic = (
     .map((i): ColorError => {
       return {
         name: i.name as string,
+        // @ts-ignore
         value: i[i.model],
         msg: `${i.name} value is ${i.model} but document is ${diagnostic.colorModel}`,
       } as ColorError;

@@ -3,7 +3,7 @@ import { version } from "./package.json";
 
 const config: CEP_Config = {
   version,
-  id: "com.hardhat.cep",
+  id: "com.checkpoint.cep",
   displayName: "Checkpoint",
   symlink: "local",
   port: 3000,
@@ -31,7 +31,7 @@ const config: CEP_Config = {
       minWidth: 40,
       minHeight: 370,
       maxWidth: 350,
-      maxHeight: 800,
+      maxHeight: 700,
     },
     {
       mainPath: "./main/index.html",
