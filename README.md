@@ -1,3 +1,9 @@
+# CRITICAL
+
+- Something's going wrong with Groups, their contents aren't being processed
+
+# TODO
+
 - Write scripting in such a way that panel can process chunks rather than entire artwork file, would be needed on largest of files
 - Create basic demo site with Lottie outlines of Pear and Mango, credit original artist
 - Needs input-scroll autoselect
