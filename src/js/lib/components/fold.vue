@@ -2,14 +2,18 @@
 import { computed, ref, watch, useSlots, onMounted } from 'vue';
 import { ns } from '../shared/shared';
 import { csi } from '../utils/bolt';
-import { getVersion } from '../utils/getVersion';
+import { getPackage } from '../utils/getVersion';
+import { useCore } from '../../stores/core';
 
-const version = ref("")
+const core = useCore()
+
+const version = ref(core.version.real)
 const props = defineProps<{
   open?: boolean,
   label: string
 }>()
 
+const isMounted = ref(false)
 const isOpen = ref(props.open || false);
 const elt = ref<HTMLDivElement | null>(null), mainElt = ref<HTMLDivElement | null>(null), labelElt = ref<HTMLDivElement | null>(null)
 const contentHeight = ref(0), mainPanelHeight = ref(0), labelHeight = ref(0);
@@ -20,7 +24,9 @@ onMounted(async () => {
   labelHeight.value = (labelElt.value as HTMLDivElement).getBoundingClientRect().height
   contentHeight.value = (elt.value as HTMLDivElement).children[0].getBoundingClientRect().height + 8;
   getMainPanelHeight();
-  version.value = await getVersion();
+  setTimeout(() => {
+    isMounted.value = true;
+  }, 500);
 })
 
 function getMainPanelHeight() {
@@ -57,8 +63,17 @@ watch(isOpen, () => {
       }">
       <slot />
     </div>
-    <div class="footer">
-      {{ version }}
+    <div class="footer" :class="{
+        outdated: core.isOutdated
+      }" :style="{
+      opacity: isMounted ? 0.35 : 0
+    }">
+      <div class="footer-number">
+        {{ version }}
+      </div>
+      <div class="footer-indicator" v-if="core.isOutdated" :title="`Version ${core.version.live} is available`">
+        <mdicon name="alert" class="toolbar-icon" size="12px" />
+      </div>
     </div>
   </div>
 </template>
@@ -123,6 +138,13 @@ watch(isOpen, () => {
   margin-bottom: 0px;
   letter-spacing: 1ch;
   font-size: 8px;
-  opacity: 0.35;
+  /* opacity: 0.35; */
+  display: flex;
+  flex-wrap: nowrap;
+  transition: opacity 160ms var(--quint) 20ms;
+}
+
+.footer.outdated * {
+  color: var(--color-alert)
 }
 </style>

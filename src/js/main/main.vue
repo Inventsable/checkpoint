@@ -5,12 +5,14 @@ import Panel from '../lib/components/panel.vue'
 import { RouterLink, RouterView, useRouter } from 'vue-router'
 import { useSettings } from "../stores/settings";
 import { useHelp } from "../stores/help";
+import { useCore } from '../stores/core'
 import {
   csi,
   evalES,
 } from "../lib/utils/utils";
 const settings = useSettings(),
-  help = useHelp();
+  help = useHelp(),
+  core = useCore()
 
 const
   root = `${csi.getSystemPath("extension")}/`,
@@ -20,6 +22,7 @@ const
 onBeforeMount(async () => {
   if (!isPopup) {
     await settings.init();
+    await core.init();
   } else {
     await help.init();
   }

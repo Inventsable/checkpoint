@@ -1,6 +1,7 @@
 {
-  "name": "bolt-cep",
+  "name": "checkpoint",
   "version": "0.0.2",
+  "homepage": "www.google.com",
   "scripts": {
     "dev": "vite",
     "watch": "tsc && vite build --watch true",

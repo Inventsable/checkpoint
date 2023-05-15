@@ -1,5 +1,11 @@
+import datum from "../../../../package.json";
 import { csi } from "./bolt";
 import { fs, path } from "./node";
+
+export const getPackage = () => {
+  return datum;
+};
+
 export const getVersionSync = (): string => {
   const data = window.cep.fs.readFile(
     path
