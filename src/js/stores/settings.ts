@@ -103,11 +103,11 @@ export const useSettings = defineStore(name, {
         forceOpacity: true,
         renameGenericPaths: true,
         generateIds: false,
-        groupRelated: true,
+        groupRelated: false,
         scaleFactor: 100,
         ignoreBackgrounds: false,
-        ignoreHidden: true,
-        ignoreLocked: true,
+        ignoreHidden: false,
+        ignoreLocked: false,
         warnForComplexArt: true,
         mergeClippingMasks: true,
         createAsCopy: false,
@@ -168,10 +168,15 @@ export const useSettings = defineStore(name, {
         { deep: true }
       );
     },
-    softReset() {
+    async softReset() {
       deduceTheme();
-      this.deleteSettings();
+      await this.deleteSettings();
       this.$reset();
+    },
+    async flyoutReset() {
+      await this.deleteSettings();
+      this.$reset();
+      await this.init();
     },
     async deleteSettings() {
       if (exists(SETTINGS_FILE)) return await deleteFile(SETTINGS_FILE);

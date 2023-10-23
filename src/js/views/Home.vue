@@ -47,7 +47,7 @@ const menuOpts = [
   {
     label: "Reset data",
     id: "resetStore",
-    callback: () => settings.$reset(),
+    callback: () => settings.softReset(),
     enabled: true,
     checked: false,
   },

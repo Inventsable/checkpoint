@@ -23,6 +23,8 @@ interface PathPoint {
   remove: () => void;
 }
 
+const DEBUG = false;
+
 export const displayWarning = (options: string) => {
   const dialogOpts = JSON.parse(options) as DialogOptions;
   const result = scriptConfirmation(dialogOpts);
@@ -32,10 +34,10 @@ export const displayWarning = (options: string) => {
 // Thanks Stephen
 // https://github.com/MarshySwamp/ScriptUI-Confirm-Window
 export const scriptConfirmation = (options: DialogOptions) => {
-  var confirmationTitle = options.title,
+  let confirmationTitle = options.title,
     confirmationString2 = options.body;
   try {
-    var confirmationWindow = new Window("dialog");
+    let confirmationWindow = new Window("dialog");
     confirmationWindow.text = confirmationTitle;
     confirmationWindow.preferredSize.width = 400;
     confirmationWindow.preferredSize.height = 60;
@@ -44,7 +46,7 @@ export const scriptConfirmation = (options: DialogOptions) => {
     confirmationWindow.alignChildren = ["left", "top"];
     confirmationWindow.spacing = 15;
     confirmationWindow.margins = 20;
-    var textGroup = confirmationWindow.add("group", undefined, {
+    let textGroup = confirmationWindow.add("group", undefined, {
       name: "textGroup",
     });
     textGroup.preferredSize.width = 400;
@@ -52,7 +54,7 @@ export const scriptConfirmation = (options: DialogOptions) => {
     textGroup.alignChildren = ["left", "center"];
     textGroup.spacing = 5;
     textGroup.margins = 0;
-    var confirmationText2 = textGroup.add("statictext", undefined, undefined, {
+    let confirmationText2 = textGroup.add("statictext", undefined, undefined, {
       name: "confirmationText2",
       multiline: true,
     });
@@ -61,7 +63,7 @@ export const scriptConfirmation = (options: DialogOptions) => {
     confirmationText2.graphics.font = "dialog:13";
     confirmationText2.alignment = ["left", "center"];
     confirmationText2.preferredSize.width = 400;
-    var buttonGroup = confirmationWindow.add("group", undefined, {
+    let buttonGroup = confirmationWindow.add("group", undefined, {
       name: "buttonGroup",
     });
     buttonGroup.orientation = "row";
@@ -69,12 +71,12 @@ export const scriptConfirmation = (options: DialogOptions) => {
     buttonGroup.spacing = 0;
     buttonGroup.margins = 10;
     buttonGroup.preferredSize.width = 400;
-    var cancelButton = buttonGroup.add("button", undefined, undefined, {
+    let cancelButton = buttonGroup.add("button", undefined, undefined, {
       name: "cancelButton",
     });
     cancelButton.text = "CANCEL";
     cancelButton.justify = "right";
-    var okButton = buttonGroup.add("button", undefined, undefined, {
+    let okButton = buttonGroup.add("button", undefined, undefined, {
       name: "okButton",
     });
     okButton.text = "OK";
@@ -100,23 +102,31 @@ export const newCMYK = (color: cmykColor): cmykColor => {
   temp.black = color.black;
   return temp;
 };
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/isArray
+// @ts-ignore
+if (!Array.isArray) {
+  // @ts-ignore
+  Array.isArray = function (arg) {
+    return Object.prototype.toString.call(arg) === "[object Array]";
+  };
+}
 // @ts-ignore
 Array.prototype.map = function (callback) {
-  var mappedParam = [];
-  for (var i = 0; i < this.length; i++)
+  let mappedParam = [];
+  for (let i = 0; i < this.length; i++)
     mappedParam.push(callback(this[i], i, this));
   return mappedParam;
 };
 // @ts-ignore
 Array.prototype.filter = function (callback) {
-  var filtered = [];
-  for (var i = 0; i < this.length; i++)
+  let filtered = [];
+  for (let i = 0; i < this.length; i++)
     if (callback(this[i], i, this)) filtered.push(this[i]);
   return filtered;
 };
 // @ts-ignore
 Array.prototype.reduce = function (fn, initial) {
-  var values = this;
+  let values = this;
   // @ts-ignore
   values.forEach(function (item: any) {
     initial = initial !== undefined ? fn(initial, item) : item;
@@ -125,38 +135,50 @@ Array.prototype.reduce = function (fn, initial) {
 };
 // @ts-ignore
 Array.prototype.forEach = function (callback) {
-  for (var i = 0; i < this.length; i++) callback(this[i], i, this);
+  for (let i = 0; i < this.length; i++) callback(this[i], i, this);
 };
 // @ts-ignore
 Array.prototype.every = function (callback) {
-  var count = 0;
-  for (var i = 0; i < this.length; i++) if (callback(this[i], i, this)) count++;
+  let count = 0;
+  for (let i = 0; i < this.length; i++) if (callback(this[i], i, this)) count++;
   return count == this.length;
+};
+// @ts-ignore
+Array.prototype.flat = function () {
+  // @ts-ignore
+  function flattenArrayOfArrays(a, r) {
+    if (!r) r = [];
+    for (let i = 0; i < a.length; i++)
+      // @ts-ignore
+      if (Array.isArray(a[i])) r.concat(flattenArrayOfArrays(a[i], r));
+      else r.push(a[i]);
+    return r;
+  }
+  // @ts-ignore
+  return flattenArrayOfArrays(this);
 };
 
 // @ts-ignore
 Array.prototype.some = function (callback) {
-  for (var i = 0; i < this.length; i++)
+  for (let i = 0; i < this.length; i++)
     if (callback(this[i], i, this)) return true;
   return false;
 };
 
-export const get = (type: string, parent?: any, deep?: boolean): any[] => {
-  // @ts-ignore
+function get(type, parent, deep) {
   if (arguments.length == 1 || !parent) {
     parent = app.activeDocument;
     deep = true;
   }
-  var result = [];
+  let result = [];
   if (!parent[type]) return [];
-  for (var i = 0; i < parent[type].length; i++) {
+  for (let i = 0; i < parent[type].length; i++) {
     result.push(parent[type][i]);
     if (parent[type][i][type] && deep)
-      // @ts-ignore
       result = [].concat(result, get(type, parent[type][i], deep));
   }
   return result;
-};
+}
 
 export const getColorFromPicker = (previous: string) => {
   const input: ColorValue | null = previous
@@ -191,6 +213,10 @@ export const getColorFromPicker = (previous: string) => {
 export const startOutliner = (data: string): string | boolean => {
   const asChunks = false;
   const config = JSON.parse(data) as Config;
+  // "Target layer cannot be modified" bug in scripting if a user has a locked
+  // top layer. Really odd, I've literally never seen that before
+  const topLayerLock = app.activeDocument.layers[0].locked;
+  app.activeDocument.layers[0].locked = false;
   if (asChunks) {
     alert("Not currently supported");
     return false;
@@ -199,10 +225,23 @@ export const startOutliner = (data: string): string | boolean => {
     convertListToOutlines(config, list);
     sortLayerContents();
   }
+  app.activeDocument.layers[0].locked = topLayerLock;
   return "HELLO";
 };
 
+export const overrideActiveLayerIfLocked = (): void => {
+  const activeIsLocked = app.activeDocument.activeLayer.locked,
+    freeLayers = get("layers").filter((layer) => !layer.locked);
+  if (activeIsLocked) app.activeDocument.activeLayer.locked = false;
+  if (activeIsLocked && freeLayers.length) {
+    app.activeDocument.activeLayer = freeLayers[0];
+  } else if (activeIsLocked && !freeLayers.length) {
+    alert("Cannot run when all layers are locked");
+  }
+};
+
 export const runDiagnostic = (): string => {
+  overrideActiveLayerIfLocked();
   const dia = {
     paths: {
       count: app.activeDocument.pathItems.length,
@@ -227,47 +266,74 @@ export const generateColor = (color: ColorPackage) => {
 };
 
 export const scanCurrentPageItems = (config: Config): any[] => {
-  var list = [];
+  let list = [];
   if (!config.options.overrideComplex) {
     if (config.options.mergeClippingMasks) mergeClippingPaths();
-    for (var i = app.activeDocument.pathItems.length - 1; i >= 0; i--)
-      list.push(app.activeDocument.pathItems[i]);
-    return filteredList(config, list);
+    // @ts-ignore
+    return filteredList(config, get("pathItems"));
   } else {
     return cloneAllPathItems(config);
   }
 };
 
+/**
+ * Fixing the issue where nested groups were being ignored:
+ */
+// export const getValidPathItems = (list?: any[]): any[] => {
+//   const result = [];
+//   for (let i = app.activeDocument.pageItems.length - 1; i >= 0; i--) {
+//     let child = app.activeDocument.pageItems[i];
+//     if (
+//       (child.pageItems && child.pageItems.length) ||
+//       (child.pathItems && child.pathItems.length)
+//     ) {
+//       result.push(
+//         get("pageItems", child, true).filter((item) =>
+//           /^pathItem$/i.test(item.typename)
+//         )
+//       );
+//     } else if (/^pathitem$/i.test(child.typename)) {
+//       result.push(child);
+//     }
+//   }
+//   return result.flat();
+// };
+
 export const filteredList = (config: Config, list: any[]): any[] => {
   // @ts-ignore
   return list.filter((i) => {
+    // TODO - Items matching color of designated background should be filtered
     const isBackgroundState = pathIsEquivalentToBackground(config, i);
-    return (
-      (!config.options.ignoreHidden ||
-        !checkAncestryForProp(i, "visible", true, [i.hidden])
+    let didPassVisible = !config.options.ignoreHidden
+      ? !getAncestryChain(i, "visible", true, [i.hidden])
           // @ts-ignore
-          .some((i) => !!i)) &&
-      (!config.options.ignoreLocked ||
-        !checkAncestryForProp(i, "locked", false, [i.locked])
+          .some((i) => !!i)
+      : false;
+    let didPassLock = !config.options.ignoreLocked
+      ? !getAncestryChain(i, "locked", false, [i.locked])
           // @ts-ignore
-          .some((i) => !!i))
-    );
+          .some((i) => !!i)
+      : false;
+    return didPassVisible && didPassLock && /^pathItem$/i.test(i.typename);
   });
 };
 
-export const checkAncestryForProp = (
+export const getAncestryChain = (
   item: any,
   prop: string,
   toggled: boolean,
   chain: any[]
-): any[] => {
+): any => {
   if (item.parent && !/document/i.test(item.parent.typename)) {
+    let needSwitch = prop == "visible" && item.parent.uuid;
+    let realProp = needSwitch ? "hidden" : prop;
+    let realToggled = needSwitch ? !toggled : toggled;
     chain = [].concat(
       // @ts-ignore
       chain,
-      toggled ? !item.parent[prop] : item.parent[prop]
+      realToggled ? !item.parent[realProp] : item.parent[realProp]
     );
-    return checkAncestryForProp(item.parent, prop, toggled, chain);
+    return getAncestryChain(item.parent, prop, toggled, chain);
   } else return chain;
 };
 
@@ -280,8 +346,11 @@ export const pathIsEquivalentToBackground = (
 };
 
 export const convertListToOutlines = (config: Config, list: any[]) => {
-  for (var i = list.length - 1; i >= 0; i--) {
-    var item = list[i];
+  for (let i = list.length - 1; i >= 0; i--) {
+    let item = list[i];
+    if (DEBUG) {
+      alert(item);
+    }
     const parentage = item.name || item.parent.name || item.layer.name;
     item.name = config.options.renameGenericPaths
       ? // @ts-ignore
@@ -289,7 +358,7 @@ export const convertListToOutlines = (config: Config, list: any[]) => {
       : parentage;
     if (item.stroked || item.filled) {
       replaceAppearance(config, item);
-      var parentgroup = config.options.groupRelated
+      let parentgroup = config.options.groupRelated
         ? app.activeDocument.groupItems.add()
         : null;
       if (config.options.groupRelated && parentgroup && !item.layer.locked) {
@@ -300,10 +369,10 @@ export const convertListToOutlines = (config: Config, list: any[]) => {
         }
       }
       if (item.pathPoints && item.pathPoints.length)
-        for (var p = 0; p < item.pathPoints.length; p++) {
-          var point = item.pathPoints[p];
-          var pointName = item.name + "[" + p + "]";
-          var group = config.options.groupRelated
+        for (let p = 0; p < item.pathPoints.length; p++) {
+          let point = item.pathPoints[p];
+          let pointName = item.name + "[" + p + "]";
+          let group = config.options.groupRelated
             ? // @ts-ignore
               parentgroup.groupItems.add()
             : null;
@@ -326,7 +395,7 @@ export const drawAnchor = (
   group: any
 ) => {
   const root = config.options.groupRelated ? group : app.activeDocument;
-  var anchor = root.pathItems.rectangle(
+  let anchor = root.pathItems.rectangle(
     point.anchor[1] + config.anchor.style.size / 2,
     point.anchor[0] - config.anchor.style.size / 2,
     config.anchor.style.size,
@@ -354,7 +423,7 @@ export const drawHandle = (
     Number(point.anchor[1]) !==
       Number(point[(direction + "Direction") as keyof PathPoint][1])
   ) {
-    var stick = config.options.groupRelated
+    let stick = config.options.groupRelated
       ? group.pathItems.add()
       : app.activeDocument.pathItems.add();
     stick.setEntirePath([
@@ -371,7 +440,7 @@ export const drawHandle = (
 
     const root = config.options.groupRelated ? group : app.activeDocument;
 
-    var handle = root.pathItems.ellipse(
+    let handle = root.pathItems.ellipse(
       point[(direction + "Direction") as keyof PathPoint][1] +
         config.handle.style.size / 2,
       point[(direction + "Direction") as keyof PathPoint][0] -
@@ -399,7 +468,7 @@ export const setAnchorAppearance = (
   isHandle: boolean,
   layer: any
 ): void => {
-  var realColor = config.options.useLayerLabelColor
+  let realColor = config.options.useLayerLabelColor
     ? layer.color
     : generateColor(config.anchor.style.color as ColorPackage);
   if (!isHandle) {
@@ -428,16 +497,16 @@ export const replaceAppearance = (config: Config, item: any) => {
 
 // Rearrange results per layer so anchor Groups are directly above their target path
 export const sortLayerContents = () => {
-  for (var i = 0; i < app.activeDocument.layers.length; i++) {
-    var layer = app.activeDocument.layers[i];
+  for (let i = 0; i < app.activeDocument.layers.length; i++) {
+    let layer = app.activeDocument.layers[i];
     if (layer.locked) continue;
-    for (var c = 0; c < layer.pathItems.length; c++)
+    for (let c = 0; c < layer.pathItems.length; c++)
       layer.pathItems[c].zOrder(ZOrderMethod.BRINGTOFRONT);
-    var offset = layer.pathItems.length + 1;
-    for (var c = 0; c < layer.groupItems.length; c++) {
-      var group = layer.groupItems[c];
+    let offset = layer.pathItems.length + 1;
+    for (let c = 0; c < layer.groupItems.length; c++) {
+      let group = layer.groupItems[c];
       offset = Number(offset) - Number(1);
-      for (var z = 0; z < offset; z++) group.zOrder(ZOrderMethod.BRINGFORWARD);
+      for (let z = 0; z < offset; z++) group.zOrder(ZOrderMethod.BRINGFORWARD);
     }
   }
 };
@@ -449,10 +518,10 @@ export const rollName = (
   item: any,
   layer: any
 ): string => {
-  var siblingCount = 0;
-  var nameRX = new RegExp(name + "\\[\\d\\].*");
+  let siblingCount = 0;
+  let nameRX = new RegExp(name + "\\[\\d\\].*");
   if (!config.options.generateIds)
-    for (var i = 0; i < layer.pathItems.length; i++)
+    for (let i = 0; i < layer.pathItems.length; i++)
       if (
         nameRX.test(layer.pathItems[i].name) &&
         layer.pathItems[i] !== item &&
@@ -466,11 +535,11 @@ export const rollName = (
 
 // Reconstruct all PathItems with basic data to override any complex appearances
 export const cloneAllPathItems = (config: Config) => {
-  var list = [];
-  var cloneProps = ["position", "left", "top", "name", "closed", "layer"];
-  var pathProps = ["anchor", "leftDirection", "rightDirection", "pointType"];
-  for (var i = app.activeDocument.pathItems.length - 1; i >= 0; i--) {
-    var item = app.activeDocument.pathItems[i];
+  let list = [];
+  let cloneProps = ["position", "left", "top", "name", "closed", "layer"];
+  let pathProps = ["anchor", "leftDirection", "rightDirection", "pointType"];
+  for (let i = app.activeDocument.pathItems.length - 1; i >= 0; i--) {
+    let item = app.activeDocument.pathItems[i];
     const isHidden = checkAncestryForProp(item, "visible", true, [
       item.hidden,
       // @ts-ignore
@@ -480,38 +549,38 @@ export const cloneAllPathItems = (config: Config) => {
       // @ts-ignore
     ]).some((i) => !!i);
     if (isHidden || isLocked) continue;
-    var clone = {
+    let clone = {
       pathPoints: [],
     };
-    for (var v = 0; v < cloneProps.length; v++) {
-      var prop = cloneProps[v];
+    for (let v = 0; v < cloneProps.length; v++) {
+      let prop = cloneProps[v];
       // @ts-ignore
       clone[prop] = item[prop];
     }
 
-    for (var v = 0; v < item.pathPoints.length; v++)
+    for (let v = 0; v < item.pathPoints.length; v++)
       // @ts-ignore
       clone.pathPoints.push(item.pathPoints[v]);
     list.push(clone);
     item.remove();
   }
   list = filteredList(config, list);
-  var dupes = [];
-  for (var i = 0; i < list.length; i++) {
-    var schema = list[i];
-    var item = app.activeDocument.pathItems.add();
-    for (var v = 0; v < cloneProps.length; v++) {
-      var prop = cloneProps[v];
+  let dupes = [];
+  for (let i = 0; i < list.length; i++) {
+    let schema = list[i];
+    let item = app.activeDocument.pathItems.add();
+    for (let v = 0; v < cloneProps.length; v++) {
+      let prop = cloneProps[v];
       // @ts-ignore
       if (prop !== "layer") item[prop] = schema[prop];
     }
     // @ts-ignore
     item.move(schema.layer, ElementPlacement.PLACEATBEGINNING);
-    for (var v = 0; v < schema.pathPoints.length; v++) {
-      var point = schema.pathPoints[v];
-      var newpoint = item.pathPoints.add();
-      for (var c = 0; c < pathProps.length; c++) {
-        var prop = pathProps[c];
+    for (let v = 0; v < schema.pathPoints.length; v++) {
+      let point = schema.pathPoints[v];
+      let newpoint = item.pathPoints.add();
+      for (let c = 0; c < pathProps.length; c++) {
+        let prop = pathProps[c];
         // @ts-ignore
         newpoint[prop] = point[prop];
       }
@@ -524,26 +593,26 @@ export const cloneAllPathItems = (config: Config) => {
 export const mergeClippingPaths = () => {
   app.selection = null;
   app.executeMenuCommand("Clipping Masks menu item");
-  var masks = app.selection;
+  let masks = app.selection;
   if (app.selection.length < 1) return null;
-  for (var i = 0; i < masks.length; i++) {
-    var mask = masks[i];
-    var parent = mask.parent;
-    var siblings = [];
-    for (var v = 0; v < parent.pathItems.length; v++) {
-      var child = parent.pathItems[v];
+  for (let i = 0; i < masks.length; i++) {
+    let mask = masks[i];
+    let parent = mask.parent;
+    let siblings = [];
+    for (let v = 0; v < parent.pathItems.length; v++) {
+      let child = parent.pathItems[v];
       if (!child.clipping) {
-        // var tag = child.tags.add();
+        // let tag = child.tags.add();
         // tag.name = "marked";
         siblings.push(child);
       }
     }
     if (siblings.length > 1)
-      for (var v = 1; v < siblings.length; v++) {
+      for (let v = 1; v < siblings.length; v++) {
         app.selection = null;
-        var dupe = mask.duplicate();
-        var sibling = siblings[v];
-        var lastname = sibling.name;
+        let dupe = mask.duplicate();
+        let sibling = siblings[v];
+        let lastname = sibling.name;
         dupe.selected = true;
         sibling.selected = true;
         intersectAction();
@@ -555,7 +624,7 @@ export const mergeClippingPaths = () => {
     app.selection = null;
     mask.selected = true;
     siblings[0].selected = true;
-    var lastname = siblings[0].name;
+    let lastname = siblings[0].name;
     intersectAction();
     app.selection = null;
     //
@@ -573,15 +642,15 @@ export const intersectAction = (): void => {
   if (app.documents.length == 0) {
     return;
   }
-  var ActionString =
+  let ActionString =
     "/version 3 /name [ 10 4578706f727454657374 ] /isOpen 1 /actionCount 1 /action-1 { /name [ 9 496e74657273656374 ] /keyIndex 0 /colorIndex 0 /isOpen 1 /eventCount 1 /event-1 { /useRulersIn1stQuadrant 0 /internalName (ai_plugin_pathfinder) /localizedName [ 10 5061746866696e646572 ] /isOpen 0 /isOn 1 /hasDialog 0 /parameterCount 1 /parameter-1 { /key 1851878757 /showInPalette -1 /type (enumerated) /name [ 9 496e74657273656374 ] /value 1 } } }";
   createAction(ActionString);
-  var ActionString = "";
+  let ActionString = "";
   app.doScript("Intersect", "ExportTest", false);
   app.unloadAction("ExportTest", "");
 };
 export const createAction = (str: string): void => {
-  var f = new File("~/ScriptAction.aia");
+  let f = new File("~/ScriptAction.aia");
   f.open("w");
   f.write(str);
   f.close();
@@ -594,14 +663,9 @@ export const randomInt = (min: number, max: number): number => {
 };
 
 export const shortId = (): string => {
-  var str = "";
-  var codex = "0123456789abcdefghijklmnopqrstuvwxyz";
-  for (var i = 0; i <= 2; i++)
+  let str = "";
+  let codex = "0123456789abcdefghijklmnopqrstuvwxyz";
+  for (let i = 0; i <= 2; i++)
     str += codex.charAt(randomInt(0, codex.length - 1));
   return str.toUpperCase();
-};
-
-// Shorthand for testing against silent script failure
-export const helloWorld = () => {
-  alert("Hello world");
 };

@@ -99,7 +99,6 @@ function replaceAnchorsWithLinks(string: string) {
 
 .help-page-content .task-list-item {
   box-sizing: border-box;
-  /* border: 2px solid red; */
   display: flex;
   justify-content: flex-start;
   align-items: baseline;
@@ -112,14 +111,14 @@ function replaceAnchorsWithLinks(string: string) {
   border-radius: 3px;
 }
 
-/* .help-page-content .task-list-item input[type="checkbox"]::before {} */
+p code {
+  background-color: var(--color-header-border);
+  padding: 2px 4px;
+  border-radius: 2px;
+  color: var(--color-selection)
+}
 
-
-/* input,
-input[disabled],
-input[disabled]:hover {
-  border: 2px solid red;
-  background-color: red !important;
-  color: red !important;
-} */
+h2 {
+  letter-spacing: 0.1ch;
+}
 </style>

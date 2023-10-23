@@ -48,7 +48,7 @@ watch(includeDisplayBG, (value) => {
 
 function forcePopup() {
   function openPopup() {
-    csi.requestOpenExtension("com.hardhat.cep.settings", "")
+    csi.requestOpenExtension("com.checkpoint.cep.settings", "")
   }
   openPopup()
   setTimeout(() => {

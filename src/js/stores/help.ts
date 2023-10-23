@@ -36,7 +36,7 @@ export const useHelp = defineStore(name, {
     timestamp: null,
     date: {} as HelpDate,
     target: {
-      name: "key-minion",
+      name: "checkpoint",
       prefix:
         "https://raw.githubusercontent.com/Inventsable/minion-pages/master/results/",
       suffix: ".json",
