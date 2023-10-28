@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ExtensionList>
+  <Extension Id="com.checkpoint.cep.main">
+    <HostList>
+      <Host Name="ILST" Port="8860"/>
+    </HostList>
+  </Extension>
+  <Extension Id="com.checkpoint.cep.settings">
+    <HostList>
+      <Host Name="ILST" Port="8861"/>
+    </HostList>
+  </Extension>
+</ExtensionList>
