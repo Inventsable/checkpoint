@@ -92,15 +92,41 @@ onMounted(() => {
       anim.value.playSegments([anim.value.totalFrames - 2, anim.value.totalFrames - 1], true);
     }
   })
-
   sliderEnums.forEach(v => {
     animAPI.value.addValueCallback(animAPI.value.getKeyPath(
       v.keypath
     ), v.callback);
   })
-
   anim.value.playSegments(anim.value.markers.slice(1).map(i => i.tm), true);
+  setTimeout(() => {
+    anim.value.play();
+  }, 200);
 })
+
+const convertToAEFTRGB = (value: number[]): number[] => {
+  return value.map((i) => i / 255)
+}
+
+// Specifically needed to change value of expression controls to match store values, otherwise
+// the panel will launch with default (yellow) and transition to user-defined color which is ugly
+function rewriteColorsToStoreValue(file) {
+  const settings = useSettings();
+  const config = {
+    "Stem Color": convertToAEFTRGB([settings.outline.style.color.red, settings.outline.style.color.green, settings.outline.style.color.blue]),
+    "Anchor Color": convertToAEFTRGB([settings.anchor.style.color.red, settings.anchor.style.color.green, settings.anchor.style.color.blue]),
+    "Stick Color": convertToAEFTRGB([settings.handle.style.color.red, settings.handle.style.color.green, settings.handle.style.color.blue]),
+    "Handle Color": convertToAEFTRGB([settings.handle.style.color.red, settings.handle.style.color.green, settings.handle.style.color.blue]),
+  }
+  const master = file.layers[4];
+  master.ef = master.ef.map(effect => {
+    if (config[effect.nm]) {
+      const val = effect.ef.find(subeffect => subeffect.nm == 'Color');
+      val.v.k = config[effect.nm]
+    }
+    return effect;
+  })
+  return file;
+}
 
 function buildAnimation() {
   const animData = {
@@ -108,8 +134,8 @@ function buildAnimation() {
     animType: "svg",
     loop: true,
     prerender: true,
-    autoplay: true,
-    animationData: animationFile
+    autoplay: false,
+    animationData: rewriteColorsToStoreValue(animationFile)
   }
   return lottie.loadAnimation(animData);
 }

@@ -2,7 +2,7 @@ import { createApp } from "vue";
 import App from "./main.vue";
 import { initBolt } from "../lib/utils/bolt";
 import { createPinia } from "pinia";
-
+import buttonVue from "../lib/components/button.vue";
 import mdiVue from "mdi-vue/v3";
 import * as mdijs from "@mdi/js";
 
@@ -15,6 +15,8 @@ initBolt();
 
 const pinia = createPinia();
 const myApp = createApp(App);
+
+myApp.component("v-button", buttonVue);
 myApp.use(router);
 myApp.use(pinia);
 myApp.use(mdiVue, {

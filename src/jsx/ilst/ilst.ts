@@ -165,6 +165,7 @@ Array.prototype.some = function (callback) {
   return false;
 };
 
+// @ts-ignore
 function get(type, parent, deep) {
   if (arguments.length == 1 || !parent) {
     parent = app.activeDocument;
@@ -175,6 +176,7 @@ function get(type, parent, deep) {
   for (let i = 0; i < parent[type].length; i++) {
     result.push(parent[type][i]);
     if (parent[type][i][type] && deep)
+      // @ts-ignore
       result = [].concat(result, get(type, parent[type][i], deep));
   }
   return result;
@@ -231,6 +233,7 @@ export const startOutliner = (data: string): string | boolean => {
 
 export const overrideActiveLayerIfLocked = (): void => {
   const activeIsLocked = app.activeDocument.activeLayer.locked,
+    // @ts-ignore
     freeLayers = get("layers").filter((layer) => !layer.locked);
   if (activeIsLocked) app.activeDocument.activeLayer.locked = false;
   if (activeIsLocked && freeLayers.length) {
@@ -245,6 +248,7 @@ export const runDiagnostic = (): string => {
   const dia = {
     paths: {
       count: app.activeDocument.pathItems.length,
+      // @ts-ignore
       anchors: get("pathItems")
         // @ts-ignore
         .map((i) => i.pathPoints.length)
@@ -275,29 +279,6 @@ export const scanCurrentPageItems = (config: Config): any[] => {
     return cloneAllPathItems(config);
   }
 };
-
-/**
- * Fixing the issue where nested groups were being ignored:
- */
-// export const getValidPathItems = (list?: any[]): any[] => {
-//   const result = [];
-//   for (let i = app.activeDocument.pageItems.length - 1; i >= 0; i--) {
-//     let child = app.activeDocument.pageItems[i];
-//     if (
-//       (child.pageItems && child.pageItems.length) ||
-//       (child.pathItems && child.pathItems.length)
-//     ) {
-//       result.push(
-//         get("pageItems", child, true).filter((item) =>
-//           /^pathItem$/i.test(item.typename)
-//         )
-//       );
-//     } else if (/^pathitem$/i.test(child.typename)) {
-//       result.push(child);
-//     }
-//   }
-//   return result.flat();
-// };
 
 export const filteredList = (config: Config, list: any[]): any[] => {
   // @ts-ignore
@@ -645,7 +626,6 @@ export const intersectAction = (): void => {
   let ActionString =
     "/version 3 /name [ 10 4578706f727454657374 ] /isOpen 1 /actionCount 1 /action-1 { /name [ 9 496e74657273656374 ] /keyIndex 0 /colorIndex 0 /isOpen 1 /eventCount 1 /event-1 { /useRulersIn1stQuadrant 0 /internalName (ai_plugin_pathfinder) /localizedName [ 10 5061746866696e646572 ] /isOpen 0 /isOn 1 /hasDialog 0 /parameterCount 1 /parameter-1 { /key 1851878757 /showInPalette -1 /type (enumerated) /name [ 9 496e74657273656374 ] /value 1 } } }";
   createAction(ActionString);
-  let ActionString = "";
   app.doScript("Intersect", "ExportTest", false);
   app.unloadAction("ExportTest", "");
 };

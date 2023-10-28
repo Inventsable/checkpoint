@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import Drawer from '../lib/components/drawer.vue'
-
+import discordIcon from '../lib/components/discord-icon.vue';
 </script>
 
 <template>
   <div class="settings-wrapper">
-    SETTINGS
+    <discordIcon></discordIcon>
   </div>
 </template>
 

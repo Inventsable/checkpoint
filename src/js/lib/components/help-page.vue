@@ -71,7 +71,7 @@ function replaceAnchorsWithLinks(string: string) {
 
 <style>
 .help-page-content {
-  padding: 0px 16px;
+  padding: 0px 16px 24px 16px;
   position: absolute;
   box-sizing: border-box;
   left: var(--drawer-width);
@@ -91,6 +91,11 @@ function replaceAnchorsWithLinks(string: string) {
 
 .help-page-content * {
   user-select: none;
+}
+
+.help-page-content>*:last-child {
+  padding-bottom: 20px;
+
 }
 
 .help-page-content *:not(a) {

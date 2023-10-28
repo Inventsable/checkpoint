@@ -36,6 +36,9 @@ onMounted(async () => {
   else {
     settings.preloadHelpPages();
   }
+  csi.addEventListener('com.test', (data: any) => {
+    console.log(data)
+  })
 });
 
 </script>
