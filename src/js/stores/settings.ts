@@ -130,7 +130,7 @@ export const useSettings = defineStore(name, {
         chunks: {
           size: 50,
           enabled: false,
-          maxAnchors: 1000,
+          maxAnchors: 10000,
         },
         suffixes: {
           handle: "_handle",

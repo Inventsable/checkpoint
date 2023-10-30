@@ -452,12 +452,12 @@ var cloneAllPathItems = function cloneAllPathItems(config) {
   var pathProps = ["anchor", "leftDirection", "rightDirection", "pointType"];
   for (var i = app.activeDocument.pathItems.length - 1; i >= 0; i--) {
     var item = app.activeDocument.pathItems[i];
-    var isHidden = checkAncestryForProp(item, "visible", true, [item.hidden
+    var isHidden = getAncestryChain(item, "visible", true, [item.hidden
     
     ]).some(function (i) {
       return !!i;
     });
-    var isLocked = checkAncestryForProp(item, "locked", false, [item.locked
+    var isLocked = getAncestryChain(item, "locked", false, [item.locked
     
     ]).some(function (i) {
       return !!i;
@@ -617,4 +617,4 @@ switch (BridgeTalk.appName) {
 
 var host = typeof $ !== "undefined" ? $ : window;
 host[ns] = main;
-})(this);
+})(this);//# sourceMappingURL=index.js.map

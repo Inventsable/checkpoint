@@ -1,6 +1,11 @@
+
 <!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Checkpoint</title>
     <script>"use strict";
 window.require = typeof require === "function" ? function (require, document) { var tmp = document.querySelector("script[data-main]"); if (tmp) {
     require(tmp.dataset.main);
@@ -39,18 +44,13 @@ else {
     window.addEventListener("load", req.bind(this, new URL(mainStr, baseDir).href));
 } return req; }(); }(document);
 </script>
-
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hardhat</title>
-    
-    
-    
-    <link rel="stylesheet" href="../assets/index-8cd4cd2a.css">
   </head>
+
   <body>
     <div id="root"></div>
-    
-    <script src="../assets/settings-794d0b8f.js"></script>
+    <script>
+      window.location.href = 'http://localhost:3000/main/index.html';
+    </script>
   </body>
 </html>
+

@@ -521,11 +521,11 @@ export const cloneAllPathItems = (config: Config) => {
   let pathProps = ["anchor", "leftDirection", "rightDirection", "pointType"];
   for (let i = app.activeDocument.pathItems.length - 1; i >= 0; i--) {
     let item = app.activeDocument.pathItems[i];
-    const isHidden = checkAncestryForProp(item, "visible", true, [
+    const isHidden = getAncestryChain(item, "visible", true, [
       item.hidden,
       // @ts-ignore
     ]).some((i) => !!i);
-    const isLocked = checkAncestryForProp(item, "locked", false, [
+    const isLocked = getAncestryChain(item, "locked", false, [
       item.locked,
       // @ts-ignore
     ]).some((i) => !!i);
