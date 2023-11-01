@@ -2,6 +2,7 @@
   "name": "checkpoint",
   "version": "0.0.2",
   "homepage": "www.google.com",
+  "description": "Generate construction geometry as a permanent outline mode",
   "scripts": {
     "dev": "vite",
     "watch": "tsc && vite build --watch true",
